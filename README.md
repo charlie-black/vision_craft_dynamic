@@ -74,19 +74,19 @@ import 'package:flutter/material.dart';
 
 class DynamicEventPaymentFormScreen extends StatefulWidget {
   final ModuleItem moduleItem;
-
-  const DynamicEventPaymentFormScreen({Key key, required this.moduleItem}) : super(key: key);
+  const DynamicEventPaymentFormScreen({super.key, required this.moduleItem});
 
   @override
-  State<DynamicEventPaymentFormScreen> createState() => _DynamicEventPaymentFormScreenState();
+  State<DynamicEventPaymentFormScreen> createState() =>
+      _DynamicEventPaymentFormScreenState();
 }
 
-class _DynamicEventPaymentFormScreenState extends State<DynamicEventPaymentFormScreen> {
+class _DynamicEventPaymentFormScreenState
+    extends State<DynamicEventPaymentFormScreen> {
   FormItem? recentList;
   List<FormItem> formControls = [];
   final formRepo = FormsRepository();
   final _formKey = GlobalKey<FormState>();
-
   @override
   void initState() {
     super.initState();
@@ -94,28 +94,30 @@ class _DynamicEventPaymentFormScreenState extends State<DynamicEventPaymentFormS
   }
 
   final dynamicRes = DynamicResponse(status: "000");
-
   getFormControls() async {
-    var list = await formRepo.getFormsByModuleIdAndFormSequence(widget.moduleItem.moduleId, 1);
+    var list = await formRepo.getFormsByModuleIdAndFormSequence(
+        widget.moduleItem.moduleId, 1);
+
+    list?.forEach((item) {
+      AppLogger.appLogD(tag: "control--->", message: item.controlType);
+    });
     setState(() {
       formControls = list ?? [];
-      recentList = list?.firstWhere((formItem) => formItem.controlType == "LIST");
+      recentList =
+          list?.firstWhere((formItem) => formItem.controlType == "LIST");
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: DynamicForm(
-        formkey: _formKey,
-        moduleItem: widget.moduleItem,
-        forms: formControls,
-        jsonDisplay: dynamicRes.display,
-        formFields: dynamicRes.formFields,
-      ),
+    return DynamicWidget(
+      key: _formKey,
+      moduleItem: widget.moduleItem,
+      nextFormSequence: 1,
     );
   }
 }
+
 ```
 
 ### Fetching Dynamic AppBar
