@@ -150,7 +150,6 @@ class _DynamicTextFormFieldState extends State<DynamicTextFormField> {
         tag: "textformfield", message: "controlid-->${formItem?.controlId}");
 
     return Consumer<PluginState>(builder: (context, state, child) {
-      controller.clear();
       isObscured = formItem?.controlFormat == ControlFormat.PinNumber.name ||
               formItem?.controlFormat == ControlFormat.PIN.name
           ? true
