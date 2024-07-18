@@ -383,15 +383,19 @@ class APIService {
   }
 
   Future<ActivationResponse> verifyOTP(
-      {mobileNumber, key, formId = "ACTIVATE"}) async {
+      {mobileNumber, pin, key, formId = "ACTIVATE"}) async {
     var decrypted;
     final encryptedKey = CryptLib.encryptField(key);
+    final encryptedPin = CryptLib.encryptField(pin);
     ActivationResponse? activationResponse;
 
     Map<String, dynamic> requestObj = {};
     requestObj["MobileNumber"] = mobileNumber;
     requestObj["Activation"] = {};
-    requestObj["EncryptedFields"] = {"Key": "$encryptedKey"};
+    requestObj["EncryptedFields"] = {
+      "Key": "$encryptedKey",
+      "Pin": encryptedPin
+    };
 
     final route = await _sharedPref.getRoute("auth".toLowerCase());
     var res = await performDioRequest(
