@@ -120,6 +120,44 @@ class AuthRepository {
     return activationResponse;
   }
 
+  //pin-less otp call
+
+  Future<ActivationResponse> pinLessActivate({required mobileNumber}) async {
+    await _initRepository.getAppToken();
+
+    ActivationResponse activationResponse = await _services.activateMobile(
+      mobileNumber: mobileNumber,
+    );
+    if (activationResponse.status == StatusCode.success.statusCode) {
+      bool isUsingExternalBankID = useExternalBankID.value;
+
+      AppLogger.appLogD(
+          tag: "AUTH REPO",
+          message: "use external bank id $isUsingExternalBankID");
+      if (isUsingExternalBankID) {
+        var bankID = activationResponse.message;
+        if (bankID != null && bankID.isNotEmpty) {
+          AppLogger.appLogD(
+              tag: "AUTH REPO", message: "setting new bank id as $bankID");
+          await _sharedPref.setBankID(bankID);
+        }
+      }
+    } else if (activationResponse.status ==
+        StatusCode.setsecurityquestions.statusCode) {
+      _sharedPref.addCustomerMobile(mobileNumber);
+
+      _moduleRepository
+          .getModuleById(ModuleId.SECRETQUESTIONS.name)
+          .then((module) {
+        CommonUtils.getxNavigate(
+            widget: DynamicWidget(
+          moduleItem: module,
+        ));
+      });
+    }
+    return activationResponse;
+  }
+
   // Call this method to verify otp
   Future<ActivationResponse> verifyOTP(
       {required mobileNumber, required otp}) async {
