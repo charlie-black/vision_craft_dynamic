@@ -562,14 +562,15 @@ class _ImageDynamicDropDownState extends State<ImageDynamicDropDown> {
   String? _currentValue;
 
   Future<DynamicResponse?> getDropDownData(
-          String actionID, ModuleItem moduleItem,
-          {formID = "DBCALL",
-          route = "other",
-          merchantID,
-          required eventName}) =>
+    String actionID,
+    ModuleItem moduleItem, {
+    formID = "DBCALL",
+    route = "other",
+    merchantID,
+  }) =>
       _apiService.getDynamicDropDownValues(actionID, moduleItem,
           formID ?? "DBCALL", route ?? "other", merchantID,
-          eventName: eventName);
+          eventName: formItem?.eventName ?? "");
 
   @override
   initState() {
@@ -590,7 +591,6 @@ class _ImageDynamicDropDownState extends State<ImageDynamicDropDown> {
           formID: formItem?.formID,
           route: formItem?.route,
           merchantID: formItem?.merchantID,
-          eventName: null,
         ),
         builder:
             (BuildContext context, AsyncSnapshot<DynamicResponse?> snapshot) {

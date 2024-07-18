@@ -8,6 +8,7 @@ class DynamicWidget extends StatelessWidget {
   ModuleItem? moduleItem;
   FrequentAccessedModule? favouriteModule;
   String? formID;
+  String? eventName;
 
   DynamicWidget({
     super.key,
@@ -17,6 +18,7 @@ class DynamicWidget extends StatelessWidget {
     this.formFields,
     this.nextFormSequence,
     this.formID,
+    this.eventName,
     this.isWizard = false,
   });
 
