@@ -723,7 +723,9 @@ class DynamicDropDown extends StatefulWidget implements IFormWidget {
   State<DynamicDropDown> createState() => _DynamicDropDownState();
 
   @override
-  Widget render() => DynamicDropDown();
+  Widget render() => DynamicDropDown(
+        formFields: formFields,
+      );
 }
 
 class _DynamicDropDownState extends State<DynamicDropDown> {
