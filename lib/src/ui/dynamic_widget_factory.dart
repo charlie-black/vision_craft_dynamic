@@ -22,7 +22,7 @@ abstract class IFormWidget {
         );
 
       case ViewType.DYNAMICDROPDOWN:
-        return const DynamicDropDown();
+        return DynamicDropDown(formFields: formFields);
 
       case ViewType.IMAGEDYNAMICDROPDOWN:
         return const ImageDynamicDropDown();

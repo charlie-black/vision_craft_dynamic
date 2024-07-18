@@ -41,7 +41,7 @@ extension FormatPhone on String {
 extension APICall on APIService {
   Future<DynamicResponse?> getDynamicDropDownValues(String actionID,
       ModuleItem moduleItem, String formID, String route, String? merchantID,
-      {required String eventName}) async {
+      {Map<String, dynamic>? extra}) async {
     DynamicResponse dynamicResponse =
         DynamicResponse(status: StatusCode.unknown.statusCode);
 
@@ -51,8 +51,8 @@ extension APICall on APIService {
     if (moduleItem.moduleId == "PAYLOAN") {
       innerMap.addAll({"INFOFIELD1": "LOANREPAYMENT"});
     }
-    if (moduleItem.moduleId == "EVENTPAYMENTS") {
-      innerMap.addAll({"INFOFIELD1": eventName});
+    if (extra != null) {
+      innerMap.addAll(extra);
     }
 
     var request = await dioRequestBodySetUp(formID.toUpperCase(), objectMap: {

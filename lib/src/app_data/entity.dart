@@ -239,42 +239,40 @@ class FormItem {
   int? maxLines;
   @HiveField(31)
   bool? isTransactional;
-  @HiveField(32)
-  String? eventName;
 
-  FormItem(
-      {required this.controlType,
-      required this.controlText,
-      required this.moduleId,
-      this.linkedToControl,
-      this.controlId,
-      this.containerID,
-      this.actionId,
-      this.formSequence,
-      this.serviceParamId,
-      this.displayOrder,
-      this.controlFormat,
-      this.dataSourceId,
-      this.controlValue,
-      this.isMandatory,
-      this.isEncrypted,
-      this.minValue,
-      this.maxValue,
-      this.hidden,
-      this.linkedToRowID,
-      this.isEnabled,
-      this.rowID,
-      this.verticalPadding,
-      this.formID,
-      this.route,
-      this.merchantID,
-      this.hasInitialValue,
-      this.countries,
-      this.leadingDigits,
-      this.maxLength,
-      this.maxLines,
-      this.isTransactional,
-      this.eventName});
+  FormItem({
+    required this.controlType,
+    required this.controlText,
+    required this.moduleId,
+    this.linkedToControl,
+    this.controlId,
+    this.containerID,
+    this.actionId,
+    this.formSequence,
+    this.serviceParamId,
+    this.displayOrder,
+    this.controlFormat,
+    this.dataSourceId,
+    this.controlValue,
+    this.isMandatory,
+    this.isEncrypted,
+    this.minValue,
+    this.maxValue,
+    this.hidden,
+    this.linkedToRowID,
+    this.isEnabled,
+    this.rowID,
+    this.verticalPadding,
+    this.formID,
+    this.route,
+    this.merchantID,
+    this.hasInitialValue,
+    this.countries,
+    this.leadingDigits,
+    this.maxLength,
+    this.maxLines,
+    this.isTransactional,
+  });
 
   FormItem.fromJson(Map<String, dynamic> json)
       : controlType = json['ControlType'],
@@ -309,15 +307,14 @@ class FormItem {
             jsonDecode(json["LeadingDigits"] ?? "[]")?.cast<String>().toList(),
         maxLength = json["MaxLength"],
         maxLines = json["MaxLines"],
-        isTransactional = json["ISTRANSACTIONAL"],
-        eventName = json['EventName'];
+        isTransactional = json["ISTRANSACTIONAL"];
 
   @override
   String toString() {
     return '$controlType $controlText $moduleId $linkedToControl $controlId $containerID $actionId '
         '$formSequence $serviceParamId $displayOrder $isMandatory $isEncrypted $controlFormat $dataSourceId '
         '$controlValue $minValue $maxValue $hidden $linkedToRowID $isEnabled $rowID $verticalPadding $formID '
-        '$route $merchantID $hasInitialValue $countries $leadingDigits $maxLength $maxLines $isTransactional $eventName';
+        '$route $merchantID $hasInitialValue $countries $leadingDigits $maxLength $maxLines $isTransactional';
   }
 }
 

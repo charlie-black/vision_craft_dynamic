@@ -570,7 +570,7 @@ class _ImageDynamicDropDownState extends State<ImageDynamicDropDown> {
   }) =>
       _apiService.getDynamicDropDownValues(actionID, moduleItem,
           formID ?? "DBCALL", route ?? "other", merchantID,
-          eventName: formItem?.eventName ?? "");
+          );
 
   @override
   initState() {
@@ -712,13 +712,14 @@ class _ImageDynamicDropDownState extends State<ImageDynamicDropDown> {
 }
 
 class DynamicDropDown extends StatefulWidget implements IFormWidget {
-  const DynamicDropDown({super.key});
+   List<dynamic>? formFields;
+   DynamicDropDown({super.key,this.formFields});
 
   @override
   State<DynamicDropDown> createState() => _DynamicDropDownState();
 
   @override
-  Widget render() => const DynamicDropDown();
+  Widget render() =>  DynamicDropDown();
 }
 
 class _DynamicDropDownState extends State<DynamicDropDown> {
@@ -731,15 +732,26 @@ class _DynamicDropDownState extends State<DynamicDropDown> {
 
   Future<DynamicResponse?> getDropDownData(
           String actionID, ModuleItem moduleItem,
-          {formID = "DBCALL", route = "other", merchantID}) async =>
-      _apiService.getDynamicDropDownValues(
-        actionID,
-        moduleItem,
-        formID,
-        route,
-        merchantID,
-        eventName: '',
-      );
+          {formID = "DBCALL", route = "other", merchantID}) async {
+    Map<String,dynamic> innermap = {};
+    List<dynamic> fields =widget.formFields??[];
+
+    if(fields.isNotEmpty ) {
+      for (var field in fields) {
+        innermap.addAll(field);
+      }
+    }
+
+    return await _apiService.getDynamicDropDownValues(
+      actionID,
+      moduleItem,
+      formID,
+      route,
+      merchantID,
+      extra: innermap,
+    );
+
+  }
 
   @override
   initState() {
