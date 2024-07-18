@@ -171,7 +171,7 @@ class _DynamicTextFormFieldState extends State<DynamicTextFormField> {
           ? TextInputType.number
           : textFieldParams['inputType'];
       var formFieldValue = widget.formFields?.firstWhereOrNull((formField) =>
-              formField[FormFieldProp.ControlID.name].toLowerCase() ==
+              formField[FormFieldProp.ControlID.name]?.toLowerCase() ==
               formItem?.controlId?.toLowerCase()) ??
           "";
 
