@@ -738,11 +738,10 @@ class _DynamicDropDownState extends State<DynamicDropDown> {
       String actionID, ModuleItem moduleItem,
       {formID = "DBCALL", route = "other", merchantID}) async {
     Map<String, dynamic> innermap = {};
-    List<dynamic> fields = widget.formFields ?? [];
-    AppLogger.appLogD(tag: "form field Data innit", message: fields);
+    AppLogger.appLogD(tag: "form field Data innit", message: widget.formFields);
 
-    if (fields.isNotEmpty) {
-      for (var field in fields) {
+    if (widget.formFields != null) {
+      for (var field in widget.formFields ?? []) {
         innermap.addAll(field);
       }
     }
