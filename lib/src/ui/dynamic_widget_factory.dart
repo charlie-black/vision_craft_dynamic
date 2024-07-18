@@ -3,6 +3,8 @@ part of craft_dynamic;
 abstract class IFormWidget {
   factory IFormWidget(FormItem formItem, {key, jsonText, formFields}) {
     ViewType? controlType = EnumFormatter.getViewType(formItem.controlType!);
+    AppLogger.appLogD(
+        tag: "render interface method", message: "formfields>>>$formFields");
     switch (controlType) {
       case ViewType.TEXT:
         return DynamicTextFormField(formFields: formFields);
