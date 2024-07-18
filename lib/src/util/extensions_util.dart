@@ -54,6 +54,9 @@ extension APICall on APIService {
     if (moduleItem.moduleId == "PAYLOAN") {
       innerMap.addAll({"INFOFIELD1": "LOANREPAYMENT"});
     }
+    if (moduleItem.moduleId == "EVENTPAYMENTS") {
+      innerMap.addAll({"INFOFIELD1": "USSD TEST"});
+    }
 
     var request = await dioRequestBodySetUp(formID.toUpperCase(), objectMap: {
       "MerchantID": merchantID ?? moduleItem.merchantID,
