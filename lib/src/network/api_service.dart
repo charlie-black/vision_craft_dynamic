@@ -364,7 +364,7 @@ class APIService {
     Map<String, dynamic> requestObj = {};
     requestObj["MobileNumber"] = mobileNumber;
     requestObj["Activation"] = {};
-    requestObj["EncryptedFields"] = {"PIN": "$encryptedPin"};
+    // requestObj["EncryptedFields"] = {"PIN": "$encryptedPin"};
 
     final route = await _sharedPref.getRoute("auth".toLowerCase());
     var res = await performDioRequest(
