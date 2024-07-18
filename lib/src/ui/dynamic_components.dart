@@ -66,6 +66,7 @@ class BaseFormInheritedComponent extends InheritedWidget {
   final GlobalKey<FormState> formKey;
   final Widget widget;
   List<dynamic>? jsonText;
+  final String? eventName;
 
   BaseFormInheritedComponent(
       {super.key,
@@ -74,6 +75,7 @@ class BaseFormInheritedComponent extends InheritedWidget {
       required this.moduleItem,
       required this.formItems,
       required this.formKey,
+      this.eventName,
       this.jsonText})
       : super(child: widget);
 
@@ -122,6 +124,7 @@ class _DynamicTextFormFieldState extends State<DynamicTextFormField> {
   FormItem? formItem;
   ModuleItem? moduleItem;
   String? initialValue;
+  String? eventName;
   String linkedToControlText = "";
 
   @override
@@ -137,6 +140,7 @@ class _DynamicTextFormFieldState extends State<DynamicTextFormField> {
     super.didChangeDependencies();
     formItem = BaseFormInheritedComponent.of(context)?.formItem;
     moduleItem = BaseFormInheritedComponent.of(context)?.moduleItem;
+    eventName = BaseFormInheritedComponent.of(context)?.eventName;
   }
 
   updateControllerText(String value) {
@@ -559,9 +563,13 @@ class _ImageDynamicDropDownState extends State<ImageDynamicDropDown> {
 
   Future<DynamicResponse?> getDropDownData(
           String actionID, ModuleItem moduleItem,
-          {formID = "DBCALL", route = "other", merchantID}) =>
+          {formID = "DBCALL",
+          route = "other",
+          merchantID,
+          required eventName}) =>
       _apiService.getDynamicDropDownValues(actionID, moduleItem,
-          formID ?? "DBCALL", route ?? "other", merchantID);
+          formID ?? "DBCALL", route ?? "other", merchantID,
+          eventName: eventName);
 
   @override
   initState() {
@@ -576,10 +584,14 @@ class _ImageDynamicDropDownState extends State<ImageDynamicDropDown> {
     moduleItem = BaseFormInheritedComponent.of(context)?.moduleItem;
 
     return FutureBuilder<DynamicResponse?>(
-        future: getDropDownData(formItem?.actionId ?? "", moduleItem!,
-            formID: formItem?.formID,
-            route: formItem?.route,
-            merchantID: formItem?.merchantID),
+        future: getDropDownData(
+          formItem?.actionId ?? "",
+          moduleItem!,
+          formID: formItem?.formID,
+          route: formItem?.route,
+          merchantID: formItem?.merchantID,
+          eventName: null,
+        ),
         builder:
             (BuildContext context, AsyncSnapshot<DynamicResponse?> snapshot) {
           Widget child = DropdownButtonFormField2(
@@ -721,7 +733,13 @@ class _DynamicDropDownState extends State<DynamicDropDown> {
           String actionID, ModuleItem moduleItem,
           {formID = "DBCALL", route = "other", merchantID}) async =>
       _apiService.getDynamicDropDownValues(
-          actionID, moduleItem, formID, route, merchantID);
+        actionID,
+        moduleItem,
+        formID,
+        route,
+        merchantID,
+        eventName: '',
+      );
 
   @override
   initState() {
