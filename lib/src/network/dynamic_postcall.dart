@@ -4,13 +4,18 @@ class DynamicPostCall {
   static final _moduleRepo = ModuleRepository();
   static final _profileRepo = ProfileRepository();
 
-  static showReceipt({required context, required postDynamic, moduleName}) {
+  static showReceipt(
+      {required context,
+      required postDynamic,
+      moduleName,
+      ModuleItem? moduleItem}) {
     _profileRepo.getAllAccountBalancesAndSaveInAppState();
     Future.delayed(const Duration(milliseconds: 500), () {
       CommonUtils.getxNavigate(
           widget: TransactionReceipt(
         postDynamic: postDynamic,
         moduleName: moduleName,
+        moduleItem: moduleItem!,
       ));
     });
   }
@@ -76,7 +81,8 @@ class DynamicPostCall {
               showReceipt(
                   context: postDynamic.context,
                   postDynamic: postDynamic,
-                  moduleName: moduleItem.moduleName);
+                  moduleName: moduleItem.moduleName,
+                  moduleItem: moduleItem);
               break;
             } else {
               navigateToStatusRoute(
