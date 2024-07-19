@@ -202,6 +202,27 @@ class _TransactionReceiptState extends State<TransactionReceipt>
                                           Text("Share",
                                               style: TextStyle(fontSize: 12))
                                         ])),
+                                    const VerticalDivider(color: Colors.black),
+                                    IconButton(
+                                        iconSize: 28,
+                                        onPressed: isLoadingPDF
+                                            ? null
+                                            : () async {
+                                          final generator =
+                                          GenerateReceiptQRCode(referenceId: '123456789');
+                                          await generator.generateAndOpenPDF();
+                                              },
+                                        icon: const Column(children: [
+                                          Icon(
+                                            color: Colors.grey,
+                                            Icons.share,
+                                          ),
+                                          SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text("QR Code ",
+                                              style: TextStyle(fontSize: 12))
+                                        ])),
                                   ],
                                 ),
                                 const SizedBox(
