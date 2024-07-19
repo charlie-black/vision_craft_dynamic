@@ -163,7 +163,8 @@ enum ModuleId {
   LOANINFORMATION,
   MAIN,
   PAYMERCHANT,
-  CHANGEPIN
+  CHANGEPIN,
+  TERMDEPOSITSTATUS
 }
 
 enum LittleProduct {

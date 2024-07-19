@@ -272,6 +272,12 @@ class ModuleUtil {
               MaterialPageRoute(builder: (context) => const LoanListScreen()));
           break;
         }
+      case ModuleId.TERMDEPOSITSTATUS:
+        {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const TermDepositStatus()));
+          break;
+        }
       case ModuleId.BOOKCAB:
         {
           NativeBinder.invokeMethod(LittleProduct
