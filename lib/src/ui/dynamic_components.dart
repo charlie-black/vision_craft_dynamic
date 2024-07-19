@@ -316,81 +316,115 @@ class HiddenWidget implements IFormWidget {
         message:
             "values--> control id:${formItem?.controlId} ${formItem?.serviceParamId} ${formItem?.controlValue}");
 
-    return Builder(builder: (context) {
-      String controlValue = "";
+    return Consumer<PluginState>(builder: (context, state, child) {
+      return Builder(builder: (context) {
+        String controlValue = "";
 
-      if (formItem?.controlFormat == ControlFormat.OWNNUMBER.name) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _sharedPref.getCustomerMobile().then((value) {
-            if (value != null && value.toString().isNotEmpty) {
-              Provider.of<PluginState>(context, listen: false)
-                  .addFormInput({"${formItem?.serviceParamId}": value});
-            }
-          });
-        });
-      } else {
-        if (formFields != null) {
-          formFields?.forEach((formField) {
-            if (formField[FormFieldProp.ControlID.name] ==
-                formItem?.controlId) {
-              controlValue = formField[FormFieldProp.ControlValue.name] ?? "";
-              if (controlValue.isNotEmpty) {
-                children.add(SizedBox(
-                  height: 0,
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        errorBorder: InputBorder.none),
-                    validator: (value) {
-                      AppLogger.appLogD(
-                          tag: "hidden widget",
-                          message: formItem?.serviceParamId);
-                      Provider.of<PluginState>(context, listen: false)
-                          .addFormInput(
-                              {formItem?.serviceParamId: controlValue});
-                    },
-                  ),
-                ));
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  AppLogger.appLogD(
-                      tag: "hidden component",
-                      message: "${formItem?.serviceParamId} $controlValue");
-                  Provider.of<PluginState>(context, listen: false).addFormInput(
-                      {"${formItem?.serviceParamId}": controlValue});
-                });
+        if (formItem?.controlFormat == ControlFormat.OWNNUMBER.name) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _sharedPref.getCustomerMobile().then((value) {
+              if (value != null && value.toString().isNotEmpty) {
+                Provider.of<PluginState>(context, listen: false)
+                    .addFormInput({"${formItem?.serviceParamId}": value});
               }
-            }
+            });
           });
         } else {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            AppLogger.appLogD(
-                tag: "hidden widget",
-                message: "adding values to hidden widget");
-          });
-          children.add(SizedBox(
-            height: 0,
-            child: TextFormField(
-              decoration: const InputDecoration(
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  errorBorder: InputBorder.none),
-              validator: (value) {
+          if (formFields != null) {
+            formFields?.forEach((formField) {
+              if (formField[FormFieldProp.ControlID.name] ==
+                  formItem?.controlId) {
+                controlValue = formField[FormFieldProp.ControlValue.name] ?? "";
+                if (controlValue.isNotEmpty) {
+                  children.add(SizedBox(
+                    height: 0,
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          errorBorder: InputBorder.none),
+                      validator: (value) {
+                        AppLogger.appLogD(
+                            tag: "hidden widget",
+                            message: formItem?.serviceParamId);
+                        Provider.of<PluginState>(context, listen: false)
+                            .addFormInput(
+                                {formItem?.serviceParamId: controlValue});
+                      },
+                    ),
+                  ));
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    AppLogger.appLogD(
+                        tag: "hidden component",
+                        message: "${formItem?.serviceParamId} $controlValue");
+                    Provider.of<PluginState>(context, listen: false)
+                        .addFormInput(
+                            {"${formItem?.serviceParamId}": controlValue});
+                  });
+                }
+              }
+            });
+          } else {
+            if (formItem?.linkedToRowID != null) {
+              AppLogger.appLogD(
+                  tag:
+                      "hidden linked to row id value ${formItem?.linkedToRowID}",
+                  message: state.dynamicDropDownData);
+              var linkedToControlText =
+                  state.dynamicDropDownData[formItem?.linkedToRowID]
+                          ?[formItem?.controlId] ??
+                      "";
+              children.add(SizedBox(
+                height: 0,
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none),
+                  validator: (value) {
+                    AppLogger.appLogD(
+                        tag: "hidden widget",
+                        message: formItem?.serviceParamId);
+                    Provider.of<PluginState>(context, listen: false)
+                        .addFormInput(
+                            {formItem?.serviceParamId: linkedToControlText});
+                  },
+                ),
+              ));
+            } else {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
                 AppLogger.appLogD(
-                    tag: "hidden widget", message: formItem?.serviceParamId);
-                Provider.of<PluginState>(context, listen: false).addFormInput(
-                    {formItem?.serviceParamId: formItem?.controlValue});
-              },
-            ),
-          ));
+                    tag: "hidden widget",
+                    message: "adding values to hidden widget");
+              });
+              children.add(SizedBox(
+                height: 0,
+                child: TextFormField(
+                  decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      errorBorder: InputBorder.none),
+                  validator: (value) {
+                    AppLogger.appLogD(
+                        tag: "hidden widget",
+                        message: formItem?.serviceParamId);
+                    Provider.of<PluginState>(context, listen: false)
+                        .addFormInput(
+                            {formItem?.serviceParamId: formItem?.controlValue});
+                  },
+                ),
+              ));
+            }
+          }
         }
-      }
 
-      return Column(
-        children: children,
-      );
+        return Column(
+          children: children,
+        );
+      });
     });
   }
 }
