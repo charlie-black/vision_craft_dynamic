@@ -209,7 +209,7 @@ class ListWidget extends StatelessWidget {
                                                 final generator =
                                                     GenerateReceiptQRCode(
                                                         referenceId: mapItem[
-                                                            "Reference No"]);
+                                                            "Reference"]);
                                                 await generator
                                                     .generateAndOpenPDF();
                                               },
