@@ -160,11 +160,11 @@ class AuthRepository {
 
   // Call this method to verify otp
   Future<ActivationResponse> verifyOTP(
-      {required mobileNumber, required otp}) async {
+      {required mobileNumber, required pin, required otp}) async {
     await _initRepository.getAppToken();
 
-    ActivationResponse activationResponse =
-        await _services.verifyOTP(mobileNumber: mobileNumber, key: otp);
+    ActivationResponse activationResponse = await _services.verifyOTP(
+        mobileNumber: mobileNumber, pin: pin, key: otp);
     if (activationResponse.customerID != null &&
         activationResponse.customerID != "") {
       _sharedPref.addActivationData(

@@ -21,7 +21,14 @@ class Constants {
   }
 
   static getImei() async {
-    return UniqueIdentifier.serial;
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    if (Platform.isAndroid) {
+      return androidInfo.serialNumber;
+    } else if (Platform.isIOS) {
+      return iosInfo.identifierForVendor;
+    }
   }
 
   static String getHostPlatform() {
