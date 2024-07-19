@@ -208,14 +208,17 @@ class _TransactionReceiptState extends State<TransactionReceipt>
                                         onPressed: isLoadingPDF
                                             ? null
                                             : () async {
-                                          final generator =
-                                          GenerateReceiptQRCode(referenceId: '123456789');
-                                          await generator.generateAndOpenPDF();
+                                                final generator =
+                                                    GenerateReceiptQRCode(
+                                                        referenceId:
+                                                            '123456789');
+                                                await generator
+                                                    .generateAndOpenPDF();
                                               },
                                         icon: const Column(children: [
                                           Icon(
                                             color: Colors.grey,
-                                            Icons.share,
+                                            Icons.qr_code,
                                           ),
                                           SizedBox(
                                             height: 8,
