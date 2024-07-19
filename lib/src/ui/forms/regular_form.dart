@@ -29,12 +29,16 @@ class _RegularFormWidgetState extends State<RegularFormWidget> {
   final ScrollController _scrollController = ScrollController();
   List<FormItem> formItems = [];
   FormItem? recentList;
+  String? appBarTitle;
 
   @override
   initState() {
     recentList = widget.sortedForms.toList().firstWhereOrNull(
         (formItem) => formItem.controlType == ViewType.LIST.name);
     checkIsChangePinForm(widget.moduleItem);
+    if (widget.formFields != null) {
+      appBarTitle = getValueForKey(widget.formFields ?? [], "APPBARTITLE");
+    }
     super.initState();
   }
 
@@ -47,6 +51,17 @@ class _RegularFormWidgetState extends State<RegularFormWidget> {
             title: "Info");
       });
     }
+  }
+
+  String? getValueForKey(List<dynamic> list, String key) {
+    for (var item in list) {
+      if (item is Map<String, dynamic>) {
+        if (item.containsKey(key)) {
+          return item[key];
+        }
+      }
+    }
+    return null;
   }
 
   @override
@@ -80,7 +95,7 @@ class _RegularFormWidgetState extends State<RegularFormWidget> {
         child: Scaffold(
             appBar: AppBar(
               elevation: 2,
-              title: Text(widget.moduleItem.moduleName),
+              title: Text(appBarTitle ?? widget.moduleItem.moduleName),
               actions: recentList != null
                   ? [
                       IconButton(
