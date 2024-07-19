@@ -5,8 +5,13 @@ part of craft_dynamic;
 class TransactionReceipt extends StatefulWidget {
   final PostDynamic postDynamic;
   String? moduleName;
+  ModuleItem moduleItem;
 
-  TransactionReceipt({required this.postDynamic, this.moduleName, super.key});
+  TransactionReceipt(
+      {required this.postDynamic,
+      this.moduleName,
+      required this.moduleItem,
+      super.key});
 
   @override
   State<StatefulWidget> createState() => _TransactionReceiptState();
@@ -203,26 +208,38 @@ class _TransactionReceiptState extends State<TransactionReceipt>
                                               style: TextStyle(fontSize: 12))
                                         ])),
                                     const VerticalDivider(color: Colors.black),
-                                    IconButton(
-                                        iconSize: 28,
-                                        onPressed: isLoadingPDF
-                                            ? null
-                                            : () async {
-                                          final generator =
-                                          GenerateReceiptQRCode(referenceId: '123456789');
-                                          await generator.generateAndOpenPDF();
-                                              },
-                                        icon: const Column(children: [
-                                          Icon(
-                                            color: Colors.grey,
-                                            Icons.share,
-                                          ),
-                                          SizedBox(
-                                            height: 8,
-                                          ),
-                                          Text("QR Code ",
-                                              style: TextStyle(fontSize: 12))
-                                        ])),
+                                    widget.moduleItem.moduleId ==
+                                            "EVENTPAYMENTS"
+                                        ? IconButton(
+                                            iconSize: 28,
+                                            onPressed: isLoadingPDF
+                                                ? null
+                                                : () async {
+                                                    final generator =
+                                                        GenerateReceiptQRCode(
+                                                            referenceId:
+                                                                getTransactionDetailsMap(
+                                                                        postDynamic)[
+                                                                    "Reference"]);
+                                                    await generator
+                                                        .generateAndOpenPDF();
+                                                  },
+                                            icon: const Column(children: [
+                                              Icon(
+                                                color: Colors.grey,
+                                                Icons.qr_code,
+                                              ),
+                                              SizedBox(
+                                                height: 8,
+                                              ),
+                                              Text("QR Code ",
+                                                  style:
+                                                      TextStyle(fontSize: 12))
+                                            ]))
+                                        : const SizedBox(
+                                            height: 1,
+                                            width: 1,
+                                          )
                                   ],
                                 ),
                                 const SizedBox(

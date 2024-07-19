@@ -1,8 +1,9 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:craft_dynamic/craft_dynamic.dart';
+import 'package:craft_dynamic/src/ui/dynamic_static/receipt_qr_code.dart';
 import 'package:craft_dynamic/src/util/widget_util.dart';
 import 'package:flutter/material.dart';
-import 'package:craft_dynamic/craft_dynamic.dart';
 
 class ListWidget extends StatelessWidget {
   ListWidget(
@@ -165,38 +166,56 @@ class ListWidget extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 12.0, vertical: 4.0),
                                   child: Column(
-                                    children: mapItem
-                                        .map((key, value) => MapEntry(
-                                            key,
-                                            Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 4),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "$key",
-                                                    ),
-                                                    Flexible(
-                                                        child: Text(
-                                                      value.toString(),
-                                                      style: const TextStyle(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                      textAlign:
-                                                          TextAlign.right,
-                                                    ))
-                                                  ],
-                                                ))))
-                                        .values
-                                        .toList(),
+                                    children: [
+                                      Column(
+                                        children: mapItem
+                                            .map((key, value) => MapEntry(
+                                                key,
+                                                Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(vertical: 4),
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          "$key",
+                                                        ),
+                                                        Flexible(
+                                                            child: Text(
+                                                          value.toString(),
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                        ))
+                                                      ],
+                                                    ))))
+                                            .values
+                                            .toList(),
+                                      ),
+                                      moduleItem?.moduleId == "EVENTPAYMENTS" &&
+                                              mapItem['Status'] != "FAILED"
+                                          ? IconButton(
+                                              onPressed: () async {
+                                                final generator =
+                                                    GenerateReceiptQRCode(
+                                                        referenceId: mapItem[
+                                                            "Reference"]);
+                                                await generator
+                                                    .generateAndOpenPDF();
+                                              },
+                                              icon: Icon(Icons.qr_code))
+                                          : const SizedBox()
+                                    ],
                                   ),
                                 ))),
                         const SizedBox(
