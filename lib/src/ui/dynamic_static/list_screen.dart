@@ -203,7 +203,7 @@ class ListWidget extends StatelessWidget {
                                             .toList(),
                                       ),
                                       moduleItem?.moduleId == "EVENTPAYMENTS" &&
-                                              mapItem['Status'] != "Failed"
+                                              mapItem['Status'] != "FAILED"
                                           ? IconButton(
                                               onPressed: () async {
                                                 final generator =
