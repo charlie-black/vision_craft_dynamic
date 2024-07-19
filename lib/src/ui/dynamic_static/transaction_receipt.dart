@@ -215,12 +215,11 @@ class _TransactionReceiptState extends State<TransactionReceipt>
                                             onPressed: isLoadingPDF
                                                 ? null
                                                 : () async {
-                                                    final generator =
-                                                        GenerateReceiptQRCode(
-                                                            referenceId:
-                                                                getTransactionDetailsMap(
-                                                                        postDynamic)[
-                                                                    "Reference"]);
+                                                    final generator = GenerateReceiptQRCode(
+                                                        referenceId:
+                                                            getTransactionDetailsMap(
+                                                                    postDynamic)[
+                                                                "Reference No"]);
                                                     await generator
                                                         .generateAndOpenPDF();
                                                   },
