@@ -23,9 +23,9 @@ class LoanPaymentScreen extends StatefulWidget {
 
 class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
   bool _isFullPayment = true;
-  TextEditingController _amountController = TextEditingController();
-  TextEditingController _remarksController = TextEditingController();
-  List<String> bankAccounts = [];
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _remarksController = TextEditingController();
+  List<DropdownMenuItem<String>> accounts = [];
   final _profilerepo = ProfileRepository();
   final Map<String, dynamic> innerObj = {};
   final Map<String, dynamic> requestobj = {};
@@ -34,19 +34,11 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
   bool _isMakingPayment = false;
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> fetchLoanAccounts() async {
-    api.getLoanAccounts();
-    final response = await http.get(Uri.parse('https://your_api_endpoint'));
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      List<String> dataList = data.map((item) => item.toString()).toList();
-
-      setState(() {
-        bankAccounts = dataList;
-      });
-    } else {
-      throw Exception('Failed to load data');
+  fetchBankAccounts() async {
+    var accs = await _profilerepo.getUserBankAccounts();
+    for (var acc in accs) {
+      accounts.add(DropdownMenuItem<String>(
+          value: acc.bankAccountId, child: Text(acc.bankAccountId)));
     }
   }
 
@@ -54,7 +46,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
   void initState() {
     super.initState();
     _amountController.text = widget.loanOutstandingBalance;
-    fetchLoanAccounts();
+    fetchBankAccounts();
   }
 
   void _handlePaymentTypeChange(bool? value) {
@@ -171,27 +163,21 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: DropdownButton<String>(
-                      value: bankAccounts[0], // Set the default value
+                    child: DropdownButtonFormField<String>(
+                      items: accounts,
                       onChanged: (String? newValue) {
                         setState(() {
                           selectedAccount = newValue!;
                         });
                       },
-                      items:
-                          bankAccounts.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
                     ),
                   ),
                   const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
                       'Select Payment Type:',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                     ),
                   ),
                   Padding(
@@ -202,7 +188,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                         color: Colors.transparent,
                         border: Border.all(width: 1.0),
                         borderRadius:
-                        const BorderRadius.all(Radius.circular(10.0)),
+                            const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       child: Row(
                         children: [
