@@ -57,43 +57,70 @@ class _LoanListScreenState extends State<LoanListScreen> {
                   mapItem.removeWhere(
                       (key, value) => key == null || value == null);
 
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 4.0, vertical: 0.0),
-                    child: Column(
-                      children: mapItem
-                          .map((key, value) => MapEntry(
-                              key,
-                              Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 2),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "$key:xx",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color:
-                                                Theme.of(context).primaryColor),
-                                      ),
-                                      Flexible(
-                                          child: Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            color: WidgetUtil.getTextColor(
-                                                value.toString(),
-                                                key.toString())),
-                                        textAlign: TextAlign.right,
-                                      ))
-                                    ],
-                                  ))))
-                          .values
-                          .toList(),
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(color: Colors.black, width: 1.0),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      child: Column(
+                        children: mapItem
+                            .map((key, value) => MapEntry(
+                                key,
+                                Container(
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 2),
+                                    child: ListTile(
+                                        leading: Text(
+                                          "$key:",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                        ),
+                                        trailing: Text(
+                                          value.toString(),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.normal,
+                                              color: WidgetUtil.getTextColor(
+                                                  value.toString(),
+                                                  key.toString())),
+                                          textAlign: TextAlign.right,
+                                        ))
+
+                                    // Row(
+                                    //   crossAxisAlignment:
+                                    //       CrossAxisAlignment.start,
+                                    //   mainAxisAlignment:
+                                    //       MainAxisAlignment.spaceBetween,
+                                    //   children: [
+                                    //     Text(
+                                    //       "$key:",
+                                    //       style: TextStyle(
+                                    //           fontWeight: FontWeight.bold,
+                                    //           color: Theme.of(context)
+                                    //               .primaryColor),
+                                    //     ),
+                                    //     Flexible(
+                                    //         child: Text(
+                                    //       value.toString(),
+                                    //       style: TextStyle(
+                                    //           fontWeight: FontWeight.normal,
+                                    //           color: WidgetUtil.getTextColor(
+                                    //               value.toString(),
+                                    //               key.toString())),
+                                    //       textAlign: TextAlign.right,
+                                    //     ))
+                                    //   ],
+                                    // )
+
+                                    )))
+                            .values
+                            .toList(),
+                      ),
                     ),
                   );
                 },
