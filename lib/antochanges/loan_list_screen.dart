@@ -1,4 +1,5 @@
 import 'package:craft_dynamic/antochanges/extensions.dart';
+import 'package:craft_dynamic/antochanges/loan_payment_screen.dart';
 import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
 
@@ -58,6 +59,11 @@ class _LoanListScreenState extends State<LoanListScreen> {
                 mapItem
                     .removeWhere((key, value) => key == null || value == null);
 
+                // Extract the loan account and loan outstanding balance
+                String loanAccount = mapItem['Loan Account'] ?? '';
+                String loanOutstandingBalance =
+                    mapItem['Outstanding Balance']?.toString() ?? '0';
+
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
@@ -100,7 +106,12 @@ class _LoanListScreenState extends State<LoanListScreen> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              context.navigate(LoanPaymentScreen(
+                                loanAccount: loanAccount,
+                                loanOutstandingBalance: loanOutstandingBalance,
+                              ));
+                            },
                             child: Text('Pay Loan'),
                           ),
                         ),
