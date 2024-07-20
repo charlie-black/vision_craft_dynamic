@@ -74,7 +74,7 @@ class _LoanListScreenState extends State<LoanListScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "$key:",
+                                        "$key:xx",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color:
