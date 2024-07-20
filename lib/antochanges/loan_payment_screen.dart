@@ -134,6 +134,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
+                        height: 50,
                         decoration: BoxDecoration(
                           color: Colors.transparent,
                           border: Border.all(width: 1.0),
@@ -184,6 +185,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       width: double.infinity,
+                      height: 50,
                       decoration: BoxDecoration(
                         color: Colors.transparent,
                         border: Border.all(width: 1.0),
@@ -193,25 +195,40 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                       child: Row(
                         children: [
                           Expanded(
-                            child: ListTile(
-                              title: const Text('Full'),
-                              leading: Radio<bool>(
-                                value: true,
-                                groupValue: _isFullPayment,
-                                onChanged: _handlePaymentTypeChange,
+                              child: Row(
+
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('Full'),
                               ),
-                            ),
-                          ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Radio<bool>(
+                                  value: true,
+                                  groupValue: _isFullPayment,
+                                  onChanged: _handlePaymentTypeChange,
+                                ),
+                              ),
+                            ],
+                          )),
                           Expanded(
-                            child: ListTile(
-                              title: const Text('Partial'),
-                              leading: Radio<bool>(
-                                value: false,
-                                groupValue: _isFullPayment,
-                                onChanged: _handlePaymentTypeChange,
+                              child: Row(
+                            children: [
+                              const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text('Partial'),
                               ),
-                            ),
-                          ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Radio<bool>(
+                                  value: true,
+                                  groupValue: _isFullPayment,
+                                  onChanged: _handlePaymentTypeChange,
+                                ),
+                              ),
+                            ],
+                          )),
                         ],
                       ),
                     ),
