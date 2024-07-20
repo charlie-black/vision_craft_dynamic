@@ -1,5 +1,9 @@
+import 'dart:convert';
+
+import 'package:craft_dynamic/antochanges/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
 
 import '../craft_dynamic.dart';
 
@@ -21,7 +25,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
   bool _isFullPayment = true;
   TextEditingController _amountController = TextEditingController();
   TextEditingController _remarksController = TextEditingController();
-  List<DropdownMenuItem<String>> accounts = [];
+  List<String> bankAccounts = [];
   final _profilerepo = ProfileRepository();
   final Map<String, dynamic> innerObj = {};
   final Map<String, dynamic> requestobj = {};
@@ -30,20 +34,27 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
   bool _isMakingPayment = false;
   final _formKey = GlobalKey<FormState>();
 
-  fetchBankAccounts() async {
-    var accs = await _profilerepo.getUserBankAccounts();
-    for (var acc in accs) {
-      accounts.add(DropdownMenuItem<String>(
-          value: acc.bankAccountId, child: Text(acc.bankAccountId)));
+  Future<void> fetchLoanAccounts() async {
+    api.getLoanAccounts();
+    final response = await http.get(Uri.parse('https://your_api_endpoint'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      List<String> dataList = data.map((item) => item.toString()).toList();
+
+      setState(() {
+        bankAccounts = dataList;
+      });
+    } else {
+      throw Exception('Failed to load data');
     }
-    final api = APIService();
   }
 
   @override
   void initState() {
     super.initState();
     _amountController.text = widget.loanOutstandingBalance;
-    fetchBankAccounts();
+    fetchLoanAccounts();
   }
 
   void _handlePaymentTypeChange(bool? value) {
@@ -135,36 +146,38 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                       borderRadius:
                           const BorderRadius.all(Radius.circular(10.0)),
                     ),
-                    child: ListTile(
-                      title: const Text(
-                        "Loan Account",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                      trailing: Text(
-                        widget.loanAccount,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          "Loan Account",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                        Text(
+                          widget.loanAccount,
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      ],
                     )),
               ),
               Text(
                 "Select Your Payment Account",
                 style: TextStyle(color: APIService.appPrimaryColor),
               ),
-              DropdownButtonFormField<String>(
-                items: accounts,
-                onChanged: (value) {
+              DropdownButton<String>(
+                value: bankAccounts[0], // Set the default value
+                onChanged: (String? newValue) {
                   setState(() {
-                    selectedAccount = value;
+                    selectedAccount = newValue!;
                   });
                 },
-                decoration: const InputDecoration(labelText: "Select Account"),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Account required*";
-                  }
-                  innerObj.addAll({'BANKACCOUNTID': value});
-                  return null;
-                },
+                items:
+                    bankAccounts.map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
               ),
               const Text(
                 'Select Payment Type:',
