@@ -1,5 +1,5 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import '../craft_dynamic.dart';
 
 class LoanPaymentScreen extends StatefulWidget {
@@ -78,15 +78,29 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     if (response.status != "000") {
       AlertUtil.showAlertDialog(context, response.message ?? "");
     } else {
-      Fluttertoast.showToast(
-          msg: "Loan Payment was successful",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 4,
-          backgroundColor: Colors.teal,
-          textColor: Colors.white,
-          fontSize: 12.0);
+      CoolAlert.show(
+        backgroundColor: const Color(0xff293178),
+        confirmBtnColor: const Color(0xff293178),
+        onConfirmBtnTap: () {
+          Navigator.pop(context);
+          _clearFields();
+        },
+        title: "Success!",
+        context: context,
+        type: CoolAlertType.success,
+        text: response.message,
+      );
     }
+  }
+
+  void _clearFields() {
+    setState(() {
+      _amountController.clear();
+      _remarksController.clear();
+      selectedAccount = null;
+      _isFullPayment = true;
+      _amountController.text = widget.loanOutstandingBalance;
+    });
   }
 
   Future<void> insertInnerObjects() async {
@@ -104,6 +118,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
   @override
   void dispose() {
     _amountController.dispose();
+    _remarksController.dispose();
     super.dispose();
   }
 
@@ -154,6 +169,37 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(width: 1.0),
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              "Outstanding Balance",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.loanOutstandingBalance,
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Text(
                       "Select Your Payment Account",
                       style: TextStyle(color: APIService.appPrimaryColor),
@@ -162,6 +208,10 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: DropdownButtonFormField<String>(
+                      hint: const Text(
+                        "Select Account",
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
                       items: accounts,
                       onChanged: (String? newValue) {
                         setState(() {
