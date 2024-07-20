@@ -154,4 +154,34 @@ extension ApiCall on APIService {
 
     return dynamicResponse;
   }
+
+  Future<DynamicResponse> getTermDepositStatus() async {
+    String? res;
+    LoanListItem loanListItem = LoanListItem();
+    DynamicResponse dynamicResponse =
+        DynamicResponse(status: StatusCode.unknown.name);
+    Map<String, dynamic> requestObj = {};
+    Map<String, dynamic> innerMap = {};
+
+    innerMap["MerchantID"] = "GETCLIENTTDACCOUNTS";
+    innerMap["ModuleID"] = "TERMDEPOSITSTATUS";
+    requestObj[RequestParam.Paybill.name] = innerMap;
+
+    final route =
+        await _sharedPrefs.getRoute(RouteUrl.account.name.toLowerCase());
+    try {
+      res = await performDioRequest(
+          await dioRequestBodySetUp("PAYBILL",
+              objectMap: requestObj, isAuthenticate: false),
+          route: route);
+      dynamicResponse = DynamicResponse.fromJson(jsonDecode(res ?? "{}"));
+      logger.d("termdeposit>>: $res");
+    } catch (e) {
+      // CommonUtils.showToast("Unable to get promotional images");
+      AppLogger.appLogE(tag: runtimeType.toString(), message: e.toString());
+      return dynamicResponse;
+    }
+
+    return dynamicResponse;
+  }
 }

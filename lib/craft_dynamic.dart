@@ -18,6 +18,7 @@ import 'package:craft_dynamic/antochanges/loan_products.dart';
 import 'package:craft_dynamic/src/builder/request_builder.dart';
 import 'package:craft_dynamic/src/ui/dynamic_static/pdf_screen.dart';
 import 'package:craft_dynamic/src/ui/dynamic_static/receipt_qr_code.dart';
+import 'package:craft_dynamic/src/ui/dynamic_static/term_deposit_status.dart';
 import 'package:craft_dynamic/src/ui/dynamic_static/viewpdf_screen.dart';
 import 'package:craft_dynamic/src/ui/platform_components/platform_button.dart';
 import 'package:craft_dynamic/src/util/config_util.dart';
