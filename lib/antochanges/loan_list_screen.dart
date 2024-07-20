@@ -70,30 +70,36 @@ class _LoanListScreenState extends State<LoanListScreen> {
                     child: Column(
                       children: [
                         ...mapItem.entries.map((entry) {
-                          return ListTile(
-                            leading: Text(
-                              "${entry.key}:",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor,
-                              ),
-                            ),
-                            trailing: Text(
-                              entry.value.toString(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                color: WidgetUtil.getTextColor(
-                                  entry.value.toString(),
-                                  entry.key.toString(),
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "${entry.key}:",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).primaryColor,
                                 ),
                               ),
-                              textAlign: TextAlign.right,
-                            ),
+                              Text(
+                                entry.value.toString(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: WidgetUtil.getTextColor(
+                                    entry.value.toString(),
+                                    entry.key.toString(),
+                                  ),
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ],
                           );
                         }).toList(),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: Text('Pay Loan'),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            child: Text('Pay Loan'),
+                          ),
                         ),
                       ],
                     ),
