@@ -85,10 +85,10 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
           Navigator.pop(context);
           _clearFields();
         },
-        title: "Success!",
+        title: "${response.message}!",
         context: context,
         type: CoolAlertType.success,
-        text: response.message,
+        text: "Loan payment was successful.",
       );
     }
   }
@@ -153,14 +153,14 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                             padding: EdgeInsets.all(8.0),
                             child: Text(
                               "Loan Account",
-                              style: TextStyle(color: Colors.grey),
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               widget.loanAccount,
-                              style: const TextStyle(color: Colors.grey),
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                             ),
                           ),
                         ],
@@ -183,14 +183,14 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                             padding: EdgeInsets.all(8.0),
                             child: Text(
                               "Outstanding Balance",
-                              style: TextStyle(color: Colors.grey),
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               widget.loanOutstandingBalance,
-                              style: const TextStyle(color: Colors.grey),
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                             ),
                           ),
                         ],
@@ -198,11 +198,11 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                     ),
                   ),
 
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Text(
                       "Select Your Payment Account",
-                      style: TextStyle(color: APIService.appPrimaryColor),
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                     ),
                   ),
                   Padding(
@@ -255,6 +255,9 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Radio<bool>(
+                                    activeColor: const Color(0xff293178),
+                                    fillColor:
+                                    WidgetStateColor.resolveWith((states) => const Color(0xff293178)),
                                     value: true,
                                     groupValue: _isFullPayment,
                                     onChanged: _handlePaymentTypeChange,
