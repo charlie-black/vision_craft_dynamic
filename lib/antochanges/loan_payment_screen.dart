@@ -276,6 +276,9 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Radio<bool>(
+                                    activeColor: const Color(0xff293178),
+                                    fillColor:
+                                    WidgetStateColor.resolveWith((states) => const Color(0xff293178)),
                                     value: false,
                                     groupValue: _isFullPayment,
                                     onChanged: _handlePaymentTypeChange,
