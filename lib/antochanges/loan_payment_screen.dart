@@ -47,6 +47,9 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     super.initState();
     _amountController.text = widget.loanOutstandingBalance;
     fetchBankAccounts();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchBankAccounts();
+    });
   }
 
   void _handlePaymentTypeChange(bool? value) {
