@@ -1,10 +1,5 @@
-import 'dart:convert';
-
-import 'package:craft_dynamic/antochanges/extensions.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
-
 import '../craft_dynamic.dart';
 
 class LoanPaymentScreen extends StatefulWidget {
@@ -23,9 +18,9 @@ class LoanPaymentScreen extends StatefulWidget {
 
 class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
   bool _isFullPayment = true;
-  TextEditingController _amountController = TextEditingController();
-  TextEditingController _remarksController = TextEditingController();
-  List<String> bankAccounts = [];
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _remarksController = TextEditingController();
+  List<DropdownMenuItem<String>> accounts = [];
   final _profilerepo = ProfileRepository();
   final Map<String, dynamic> innerObj = {};
   final Map<String, dynamic> requestobj = {};
@@ -34,32 +29,28 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
   bool _isMakingPayment = false;
   final _formKey = GlobalKey<FormState>();
 
-  Future<void> fetchLoanAccounts() async {
-    api.getLoanAccounts();
-    final response = await http.get(Uri.parse('https://your_api_endpoint'));
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      List<String> dataList = data.map((item) => item.toString()).toList();
-
-      setState(() {
-        bankAccounts = dataList;
-      });
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     _amountController.text = widget.loanOutstandingBalance;
-    fetchLoanAccounts();
+    fetchBankAccounts();
+  }
+
+  Future<void> fetchBankAccounts() async {
+    var accs = await _profilerepo.getUserBankAccounts();
+    setState(() {
+      accounts = accs
+          .map((acc) => DropdownMenuItem<String>(
+        value: acc.bankAccountId,
+        child: Text(acc.bankAccountId),
+      ))
+          .toList();
+    });
   }
 
   void _handlePaymentTypeChange(bool? value) {
     setState(() {
-      _isFullPayment = value!;
+      _isFullPayment = value ?? true;
       if (_isFullPayment) {
         _amountController.text = widget.loanOutstandingBalance;
       } else {
@@ -68,7 +59,11 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     });
   }
 
-  makeLoanPayment() async {
+  Future<void> makeLoanPayment() async {
+    setState(() {
+      _isMakingPayment = true;
+    });
+
     requestobj.addAll({"ModuleID": "PAYLOAN"});
     requestobj.addAll({"MerchantID": "GETCLIENTLOANACCOUNTS"});
     requestobj.addAll({"PayBill": innerObj});
@@ -76,51 +71,54 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     var response = await api.dynamicRequest(
         formID: "PAYBILL", requestObj: requestobj, webHeader: "account");
 
+    setState(() {
+      _isMakingPayment = false;
+    });
+
     if (response.status != "000") {
-      setState(() {
-        _isMakingPayment = false;
-      });
       AlertUtil.showAlertDialog(context, response.message ?? "");
     } else {
-      setState(() {
-        _isMakingPayment = false;
-      });
-      Fluttertoast.showToast(
-          msg: "Loan Payment was successful",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 4,
-          backgroundColor: Colors.teal,
-          textColor: Colors.white,
-          fontSize: 12.0);
+      CoolAlert.show(
+        backgroundColor: const Color(0xff293178),
+        confirmBtnColor: const Color(0xff293178),
+        onConfirmBtnTap: () {
+          Navigator.pop(context);
+          _clearFields();
+        },
+        title: "${response.message}!",
+        context: context,
+        type: CoolAlertType.success,
+        text: "Loan payment was successful.",
+      );
     }
+  }
+
+  void _clearFields() {
+    setState(() {
+      _amountController.clear();
+      _remarksController.clear();
+      selectedAccount = null;
+      _isFullPayment = true;
+      _amountController.text = widget.loanOutstandingBalance;
+    });
   }
 
   Future<void> insertInnerObjects() async {
     innerObj.addAll({
       "INFOFIELD6": "LOANPAYOFF",
-    });
-    innerObj.addAll({
       "INFOFIELD3": "",
-    });
-    innerObj.addAll({
       "INFOFIELD4": "",
-    });
-    innerObj.addAll({
       "INFOFIELD5": "",
-    });
-    innerObj.addAll({
       "ACCOUNTID": widget.loanAccount,
-    });
-    innerObj.addAll({
       "BANKACCOUNTID": selectedAccount,
+      "MerchantID": "GETCLIENTLOANACCOUNTS",
     });
-    innerObj.addAll({"MerchantID": "GETCLIENTLOANACCOUNTS"});
   }
 
   @override
   void dispose() {
     _amountController.dispose();
+    _remarksController.dispose();
     super.dispose();
   }
 
@@ -142,49 +140,90 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          border: Border.all(width: 1.0),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(width: 1.0),
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
                               "Loan Account",
-                              style: TextStyle(color: Colors.grey),
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                             ),
-                            Text(
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
                               widget.loanAccount,
-                              style: const TextStyle(color: Colors.grey),
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                             ),
-                          ],
-                        )),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Select Your Payment Account",
-                      style: TextStyle(color: APIService.appPrimaryColor),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: DropdownButton<String>(
-                      value: bankAccounts[0], // Set the default value
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(width: 1.0),
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              "Outstanding Balance",
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.loanOutstandingBalance,
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      "Select Your Payment Account",
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DropdownButtonFormField<String>(
+                      hint: const Text(
+                        "Select Account",
+                        style: TextStyle(color: Colors.grey, fontSize: 12),
+                      ),
+                      items: accounts,
                       onChanged: (String? newValue) {
                         setState(() {
                           selectedAccount = newValue!;
                         });
                       },
-                      items:
-                          bankAccounts.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Please select a payment account';
+                        }
+                        return null;
+                      },
                     ),
                   ),
                   const Padding(
@@ -198,32 +237,54 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                       width: double.infinity,
+                      height: 50,
                       decoration: BoxDecoration(
                         color: Colors.transparent,
                         border: Border.all(width: 1.0),
-                        borderRadius:
-                        const BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       child: Row(
                         children: [
                           Expanded(
-                            child: ListTile(
-                              title: const Text('Full'),
-                              leading: Radio<bool>(
-                                value: true,
-                                groupValue: _isFullPayment,
-                                onChanged: _handlePaymentTypeChange,
-                              ),
+                            child: Row(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text('Full'),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Radio<bool>(
+                                    activeColor: const Color(0xff293178),
+                                    fillColor:
+                                    WidgetStateColor.resolveWith((states) => const Color(0xff293178)),
+                                    value: true,
+                                    groupValue: _isFullPayment,
+                                    onChanged: _handlePaymentTypeChange,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           Expanded(
-                            child: ListTile(
-                              title: const Text('Partial'),
-                              leading: Radio<bool>(
-                                value: false,
-                                groupValue: _isFullPayment,
-                                onChanged: _handlePaymentTypeChange,
-                              ),
+                            child: Row(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text('Partial'),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Radio<bool>(
+                                    activeColor: const Color(0xff293178),
+                                    fillColor:
+                                    WidgetStateColor.resolveWith((states) => const Color(0xff293178)),
+                                    value: false,
+                                    groupValue: _isFullPayment,
+                                    onChanged: _handlePaymentTypeChange,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -233,9 +294,15 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                   const SizedBox(height: 20),
                   TextFormField(
                     validator: (value) {
-                      if (value != null && value != "") {
-                        innerObj.addAll({'AMOUNT': value});
+                      if (!_isFullPayment && (value == null || value.isEmpty)) {
+                        return 'Please enter an amount to pay';
                       }
+                      if (_isFullPayment) {
+                        innerObj['AMOUNT'] = widget.loanOutstandingBalance;
+                      } else {
+                        innerObj['AMOUNT'] = value;
+                      }
+                      return null;
                     },
                     controller: _amountController,
                     enabled: !_isFullPayment,
@@ -252,9 +319,10 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                       border: OutlineInputBorder(),
                     ),
                     validator: (value) {
-                      if (value != null && value != "") {
-                        innerObj.addAll({'INFOFIELD2': value});
+                      if (value != null && value.isNotEmpty) {
+                        innerObj['INFOFIELD2'] = value;
                       }
+                      return null;
                     },
                   ),
                   const SizedBox(height: 20),
@@ -263,28 +331,25 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(labelText: "PIN"),
                     validator: (value) {
-                      if (value == null || value == "") {
+                      if (value == null || value.isEmpty) {
                         return "PIN required*";
                       }
-                      requestobj.addAll({
-                        "EncryptedFields": {"PIN": CryptLib.encryptField(value)}
-                      });
+                      requestobj["EncryptedFields"] = {"PIN": CryptLib.encryptField(value)};
+                      return null;
                     },
                   ),
                   const SizedBox(height: 20),
-                  _isMakingPayment == true
+                  _isMakingPayment
                       ? LoadUtil()
                       : ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              setState(() {
-                                _isMakingPayment = true;
-                              });
-                              insertInnerObjects().then(makeLoanPayment());
-                            }
-                          },
-                          child: const Text('Proceed to Pay'),
-                        ),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        await insertInnerObjects();
+                        await makeLoanPayment();
+                      }
+                    },
+                    child: const Text('Proceed to Pay'),
+                  ),
                 ],
               ),
             ),

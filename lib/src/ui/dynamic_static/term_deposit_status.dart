@@ -21,6 +21,12 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
     super.initState();
   }
 
+  void _showAlert(BuildContext context, String message) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AlertUtil.showAlertDialog(context, message);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,8 +46,7 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
           } else {
             if (snapshot.hasData) {
               if (snapshot.data?.status != StatusCode.success.statusCode) {
-                AlertUtil.showAlertDialog(
-                    context, snapshot.data?.message ?? "");
+                _showAlert(context, snapshot.data?.message ?? "");
               }
 
               List<dynamic>? loans = snapshot.data?.dynamicList;
@@ -59,7 +64,7 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
                 itemBuilder: (context, index) {
                   var mapItem = items[index];
                   mapItem.removeWhere(
-                      (key, value) => key == null || value == null);
+                          (key, value) => key == null || value == null);
 
                   return Container(
                     padding: const EdgeInsets.symmetric(
@@ -67,25 +72,25 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
                     child: Column(
                       children: mapItem
                           .map((key, value) => MapEntry(
-                              key,
-                              Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 2),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "$key:",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color:
-                                                Theme.of(context).primaryColor),
-                                      ),
-                                      Flexible(
-                                          child: Text(
+                          key,
+                          Container(
+                              padding:
+                              const EdgeInsets.symmetric(vertical: 2),
+                              child: Row(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "$key:",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color:
+                                        Theme.of(context).primaryColor),
+                                  ),
+                                  Flexible(
+                                      child: Text(
                                         value.toString(),
                                         style: TextStyle(
                                             fontWeight: FontWeight.normal,
@@ -94,15 +99,15 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
                                                 key.toString())),
                                         textAlign: TextAlign.right,
                                       ))
-                                    ],
-                                  ))))
+                                ],
+                              ))))
                           .values
                           .toList(),
                     ),
                   );
                 },
                 separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(),
+                const Divider(),
               );
             } else {
               child = Center(
@@ -117,5 +122,3 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
     );
   }
 }
-
-class EmailsList {}
