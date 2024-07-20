@@ -54,13 +54,13 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
           children: [
             const Text(
               'Select Payment Type:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
             ),
             Row(
               children: [
                 Expanded(
                   child: ListTile(
-                    title: const Text('Full Payment'),
+                    title: const Text('Full'),
                     leading: Radio<bool>(
                       value: true,
                       groupValue: _isFullPayment,
@@ -70,7 +70,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                 ),
                 Expanded(
                   child: ListTile(
-                    title: const Text('Partial Payment'),
+                    title: const Text('Partial'),
                     leading: Radio<bool>(
                       value: false,
                       groupValue: _isFullPayment,
@@ -87,9 +87,6 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
               decoration: const InputDecoration(
                 labelText: 'Enter Amount To Pay',
                 border: OutlineInputBorder(),
-                suffixIcon: Icon(
-                  Icons.error,
-                ),
               ),
             ),
             const SizedBox(height: 20),
