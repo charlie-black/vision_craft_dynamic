@@ -130,139 +130,164 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
       appBar: AppBar(
         title: const Text('Loan Repayment'),
       ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      border: Border.all(width: 1.0),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10.0)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Loan Account",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        Text(
-                          widget.loanAccount,
-                          style: const TextStyle(color: Colors.grey),
-                        ),
-                      ],
-                    )),
-              ),
-              Text(
-                "Select Your Payment Account",
-                style: TextStyle(color: APIService.appPrimaryColor),
-              ),
-              DropdownButton<String>(
-                value: bankAccounts[0], // Set the default value
-                onChanged: (String? newValue) {
-                  setState(() {
-                    selectedAccount = newValue!;
-                  });
-                },
-                items:
-                    bankAccounts.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-              const Text(
-                'Select Payment Type:',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
-              ),
-              Row(
+      body: SingleChildScrollView(
+        child: Container(
+          child: Form(
+            key: _formKey,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: ListTile(
-                      title: const Text('Full'),
-                      leading: Radio<bool>(
-                        value: true,
-                        groupValue: _isFullPayment,
-                        onChanged: _handlePaymentTypeChange,
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border.all(width: 1.0),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10.0)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              "Loan Account",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            Text(
+                              widget.loanAccount,
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        )),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Select Your Payment Account",
+                      style: TextStyle(color: APIService.appPrimaryColor),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: DropdownButton<String>(
+                      value: bankAccounts[0], // Set the default value
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedAccount = newValue!;
+                        });
+                      },
+                      items:
+                          bankAccounts.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Select Payment Type:',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(width: 1.0),
+                        borderRadius:
+                        const BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ListTile(
+                              title: const Text('Full'),
+                              leading: Radio<bool>(
+                                value: true,
+                                groupValue: _isFullPayment,
+                                onChanged: _handlePaymentTypeChange,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: ListTile(
+                              title: const Text('Partial'),
+                              leading: Radio<bool>(
+                                value: false,
+                                groupValue: _isFullPayment,
+                                onChanged: _handlePaymentTypeChange,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: ListTile(
-                      title: const Text('Partial'),
-                      leading: Radio<bool>(
-                        value: false,
-                        groupValue: _isFullPayment,
-                        onChanged: _handlePaymentTypeChange,
-                      ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    validator: (value) {
+                      if (value != null && value != "") {
+                        innerObj.addAll({'AMOUNT': value});
+                      }
+                    },
+                    controller: _amountController,
+                    enabled: !_isFullPayment,
+                    decoration: const InputDecoration(
+                      labelText: 'Enter Amount To Pay',
+                      border: OutlineInputBorder(),
                     ),
                   ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _remarksController,
+                    decoration: const InputDecoration(
+                      labelText: 'Remarks',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value != null && value != "") {
+                        innerObj.addAll({'INFOFIELD2': value});
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    obscureText: true,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(labelText: "PIN"),
+                    validator: (value) {
+                      if (value == null || value == "") {
+                        return "PIN required*";
+                      }
+                      requestobj.addAll({
+                        "EncryptedFields": {"PIN": CryptLib.encryptField(value)}
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  _isMakingPayment == true
+                      ? LoadUtil()
+                      : ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              setState(() {
+                                _isMakingPayment = true;
+                              });
+                              insertInnerObjects().then(makeLoanPayment());
+                            }
+                          },
+                          child: const Text('Proceed to Pay'),
+                        ),
                 ],
               ),
-              const SizedBox(height: 20),
-              TextFormField(
-                validator: (value) {
-                  if (value != null && value != "") {
-                    innerObj.addAll({'AMOUNT': value});
-                  }
-                },
-                controller: _amountController,
-                enabled: !_isFullPayment,
-                decoration: const InputDecoration(
-                  labelText: 'Enter Amount To Pay',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _remarksController,
-                decoration: const InputDecoration(
-                  labelText: 'Remarks',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) {
-                  if (value != null && value != "") {
-                    innerObj.addAll({'INFOFIELD2': value});
-                  }
-                },
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                obscureText: true,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: "PIN"),
-                validator: (value) {
-                  if (value == null || value == "") {
-                    return "PIN required*";
-                  }
-                  requestobj.addAll({
-                    "EncryptedFields": {"PIN": CryptLib.encryptField(value)}
-                  });
-                },
-              ),
-              const SizedBox(height: 20),
-              _isMakingPayment == true
-                  ? LoadUtil()
-                  : ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          setState(() {
-                            _isMakingPayment = true;
-                          });
-                          insertInnerObjects().then(makeLoanPayment());
-                        }
-                      },
-                      child: const Text('Proceed to Pay'),
-                    ),
-            ],
+            ),
           ),
         ),
       ),
