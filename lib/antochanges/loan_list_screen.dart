@@ -59,10 +59,10 @@ class _LoanListScreenState extends State<LoanListScreen> {
                 mapItem
                     .removeWhere((key, value) => key == null || value == null);
 
-                // Extract the loan account and loan outstanding balance
                 String loanAccount = mapItem['Loan Account'] ?? '';
                 String loanOutstandingBalance =
                     mapItem['Outstanding Balance']?.toString() ?? '0';
+                String loanStatus = mapItem['Loan ID'] ?? "";
 
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -103,18 +103,24 @@ class _LoanListScreenState extends State<LoanListScreen> {
                             ),
                           );
                         }).toList(),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              context.navigate(LoanPaymentScreen(
-                                loanAccount: loanAccount,
-                                loanOutstandingBalance: loanOutstandingBalance,
-                              ));
-                            },
-                            child: Text('Pay Loan'),
-                          ),
-                        ),
+                        loanStatus == "No Active Loan found"
+                            ? const SizedBox(
+                                height: 1,
+                                width: 1,
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    context.navigate(LoanPaymentScreen(
+                                      loanAccount: loanAccount,
+                                      loanOutstandingBalance:
+                                          loanOutstandingBalance,
+                                    ));
+                                  },
+                                  child: Text('Pay Loan'),
+                                ),
+                              ),
                       ],
                     ),
                   ),
