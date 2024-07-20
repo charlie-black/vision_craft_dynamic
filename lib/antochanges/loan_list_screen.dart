@@ -63,35 +63,38 @@ class _LoanListScreenState extends State<LoanListScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.transparent,
-                      border: Border.all(color: Colors.black, width: 1.0),
+                      border: Border.all(width: 1.0),
                       borderRadius:
                           const BorderRadius.all(Radius.circular(10.0)),
                     ),
                     child: Column(
                       children: [
                         ...mapItem.entries.map((entry) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "${entry.key}:",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).primaryColor,
-                                ),
-                              ),
-                              Text(
-                                entry.value.toString(),
-                                style: TextStyle(
-                                  fontWeight: FontWeight.normal,
-                                  color: WidgetUtil.getTextColor(
-                                    entry.value.toString(),
-                                    entry.key.toString(),
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "${entry.key}:",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).primaryColor,
                                   ),
                                 ),
-                                textAlign: TextAlign.right,
-                              ),
-                            ],
+                                Text(
+                                  entry.value.toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    color: WidgetUtil.getTextColor(
+                                      entry.value.toString(),
+                                      entry.key.toString(),
+                                    ),
+                                  ),
+                                  textAlign: TextAlign.right,
+                                ),
+                              ],
+                            ),
                           );
                         }).toList(),
                         Padding(
