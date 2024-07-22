@@ -5,11 +5,13 @@ import '../craft_dynamic.dart';
 class LoanPaymentScreen extends StatefulWidget {
   final String loanAccount;
   final String loanOutstandingBalance;
+  final ModuleItem moduleItem;
 
   const LoanPaymentScreen({
     super.key,
     required this.loanAccount,
     required this.loanOutstandingBalance,
+    required this.moduleItem,
   });
 
   @override
@@ -361,6 +363,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                                     StatusCode.success.statusCode) {
                                   DynamicPostCall.processDynamicResponse(
                                       DynamicData(
+                                          moduleItem: widget.moduleItem,
                                           actionType: ActionType.PAYBILL,
                                           dynamicResponse: value,
                                           listType: ListType.BeneficiaryList),
