@@ -22,7 +22,6 @@ class _LoanRepaymentHistoryScreenState
   bool isLoading = true;
   List<FormItem> formControls = [];
   final formRepo = FormsRepository();
-  FormItem? recentList;
 
   @override
   void initState() {
