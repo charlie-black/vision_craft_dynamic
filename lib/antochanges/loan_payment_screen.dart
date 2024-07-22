@@ -41,9 +41,9 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     setState(() {
       accounts = accs
           .map((acc) => DropdownMenuItem<String>(
-                value: acc.bankAccountId,
-                child: Text(acc.bankAccountId),
-              ))
+        value: acc.bankAccountId,
+        child: Text(acc.bankAccountId),
+      ))
           .toList();
     });
   }
@@ -146,7 +146,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                         color: Colors.transparent,
                         border: Border.all(width: 1.0),
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(10.0)),
+                        const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -179,7 +179,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                         color: Colors.transparent,
                         border: Border.all(width: 1.0),
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(10.0)),
+                        const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -209,7 +209,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                     child: Text(
                       "Select Your Payment Account",
                       style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                      TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                     ),
                   ),
                   Padding(
@@ -238,7 +238,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                     child: Text(
                       'Select Payment Type:',
                       style:
-                          TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                      TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                     ),
                   ),
                   Padding(
@@ -250,7 +250,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                         color: Colors.transparent,
                         border: Border.all(width: 1.0),
                         borderRadius:
-                            const BorderRadius.all(Radius.circular(10.0)),
+                        const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       child: Row(
                         children: [
@@ -266,7 +266,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                                   child: Radio<bool>(
                                     activeColor: const Color(0xff293178),
                                     fillColor: WidgetStateColor.resolveWith(
-                                        (states) => const Color(0xff293178)),
+                                            (states) => const Color(0xff293178)),
                                     value: true,
                                     groupValue: _isFullPayment,
                                     onChanged: _handlePaymentTypeChange,
@@ -287,7 +287,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                                   child: Radio<bool>(
                                     activeColor: const Color(0xff293178),
                                     fillColor: WidgetStateColor.resolveWith(
-                                        (states) => const Color(0xff293178)),
+                                            (states) => const Color(0xff293178)),
                                     value: false,
                                     groupValue: _isFullPayment,
                                     onChanged: _handlePaymentTypeChange,
@@ -353,24 +353,24 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                   _isMakingPayment
                       ? LoadUtil()
                       : ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              await insertInnerObjects();
-                              makeLoanPayment().then((value) {
-                                if (value.status ==
-                                    StatusCode.success.statusCode) {
-                                  DynamicPostCall.processDynamicResponse(
-                                      DynamicData(
-                                          actionType: ActionType.PAYBILL,
-                                          dynamicResponse: value),
-                                      context,
-                                      "");
-                                }
-                              });
-                            }
-                          },
-                          child: const Text('Proceed to Pay'),
-                        ),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        await insertInnerObjects();
+                        makeLoanPayment().then((value) {
+                          if (value.status ==
+                              StatusCode.success.statusCode) {
+                            DynamicPostCall.processDynamicResponse(
+                                DynamicData(
+                                    actionType: ActionType.PAYBILL,
+                                    dynamicResponse: value),
+                                context,
+                                "");
+                          }
+                        });
+                      }
+                    },
+                    child: const Text('Proceed to Pay'),
+                  ),
                 ],
               ),
             ),
