@@ -1,187 +1,113 @@
-import 'dart:convert';
-
-import 'package:craft_dynamic/antochanges/extensions.dart';
 import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
 
-CommonSharedPref _sharedPrefs = CommonSharedPref();
-
-class LoanRepaymentHistoryList extends StatefulWidget {
-  const LoanRepaymentHistoryList({super.key});
+class LoanRepaymentHistoryScreen extends StatefulWidget {
+  final ModuleItem moduleItem;
+  const LoanRepaymentHistoryScreen({
+    super.key,
+    required this.moduleItem,
+  });
 
   @override
-  State<LoanRepaymentHistoryList> createState() =>
-      _LoanRepaymentHistoryListState();
+  State<LoanRepaymentHistoryScreen> createState() =>
+      _LoanRepaymentHistoryScreenState();
 }
 
-class _LoanRepaymentHistoryListState extends State<LoanRepaymentHistoryList> {
+class _LoanRepaymentHistoryScreenState
+    extends State<LoanRepaymentHistoryScreen> {
   final _apiServices = APIService();
+  List<Map<String, dynamic>> eventList = [];
+  bool isLoading = true;
+  List<FormItem> formControls = [];
+  final formRepo = FormsRepository();
+  FormItem? recentList;
+
   @override
   void initState() {
     super.initState();
+    _apiServices.getLoanRepaymentHistory().then((response) {
+      setState(() {
+        if (response != null && response.status == "000") {
+          eventList =
+              List<Map<String, dynamic>>.from(response.dynamicList ?? []);
+          isLoading = false;
+        } else {
+          eventList = [];
+          isLoading = false;
+        }
+      });
+    }).catchError((error) {
+      debugPrint('Error fetching repayment list: $error');
+      setState(() {
+        eventList = [];
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Loan Repayment History'),
+        title: const Text("Loan Repayment History"),
       ),
-      body: FutureBuilder(
-        future: _apiServices.getLoanRepaymentHistory(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          Widget child = Center(
-            child: CircularLoadUtil(),
-          );
-          if (snapshot.connectionState == ConnectionState.waiting ||
-              snapshot.connectionState == ConnectionState.active) {
-            child = const Center(
-                child: CircularProgressIndicator(
-              color: Colors.blue,
-            ));
-          } else {
-            if (snapshot.hasData) {
-              // emailList = snapshot.data;
-              // emails = emailList!.eMAILLIST!;
-              child = ListView.builder(
-                itemCount: 2,
-                itemBuilder: (context, index) {
-                  return InkWell(
-                      onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) =>
-                        //         // EmailDetailsScreen(
-                        //         //     emailSubscription: emails[index]),
-                        //   ),
-                        // );
-                      },
-                      child: const Column(
-                        children: [
-                          Padding(
-                              padding:
-                                  EdgeInsets.only(left: 10, right: 10, top: 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Loan ID:',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text('emails[index].recipient!'),
-                                ],
-                              )),
-                          Padding(
-                              padding:
-                                  EdgeInsets.only(left: 10, right: 10, top: 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'OutstandingPrincipal:',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text("${'emails[index].accountNumber'},"),
-                                ],
-                              )),
-                          Padding(
-                              padding:
-                                  EdgeInsets.only(left: 10, right: 10, top: 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Dispersed Amount:',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text("${'emails[index].accountNumber'},"),
-                                ],
-                              )),
-                          Padding(
-                              padding:
-                                  EdgeInsets.only(left: 10, right: 10, top: 10),
-                              child: Row(
-                                mainAxisAlignment:
-
-                                    // LoanID
-                                    // ,DispersedAmount
-                                    // ,OutstandingPrincipal
-                                    // ,OutstandingInterest
-                                    // ,RepaymentFrequency
-                                    // ,InstallmentAmount
-                                    // ,InstallmentStartDate
-                                    // ,ValueDate
-                                    // ,MaturityDate
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Outstanding Interest:',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text(
-                                    " ${'emails[index].frequency'}",
-                                  ),
-                                ],
-                              )),
-                          Padding(
-                              padding:
-                                  EdgeInsets.only(left: 10, right: 10, top: 10),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'Installment Amount:',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text(
-                                    " '{emails[index].'subscribedON'}'",
-                                  ),
-                                ],
-                              )),
-                          Padding(
-                              padding: EdgeInsets.only(left: 10, right: 10),
-                              child: Divider())
-                        ],
-                      ));
-                },
-              );
-            } else {
-              child = Center(
-                child: Text('${snapshot.error}'),
-              );
-            }
-          }
-
-          return child;
-        },
-      ),
+      body: SingleChildScrollView(
+          child: Container(
+        child: Text("data"),
+      )
+          // Container(
+          //   child: Column(
+          //     children: [
+          //       isLoading == false
+          //           ? ListView.builder(
+          //               shrinkWrap: true,
+          //               itemCount: eventList.length,
+          //               itemBuilder: (context, index) {
+          //                 return Padding(
+          //                   padding: const EdgeInsets.all(8.0),
+          //                   child: Container(
+          //                     decoration: BoxDecoration(
+          //                       border: Border.all(),
+          //                       borderRadius:
+          //                           const BorderRadius.all(Radius.circular(10)),
+          //                     ),
+          //                     child: ListTile(
+          //                       leading: Container(
+          //                           width: 40.0,
+          //                           height: 40.0,
+          //                           decoration: BoxDecoration(
+          //                             shape: BoxShape.circle,
+          //                             border: Border.all(
+          //                               width: 1.0,
+          //                             ),
+          //                           ),
+          //                           child: Icon(Icons.event)),
+          //                       title: Text(
+          //                         eventList[index]["EVENTNAME"] ??
+          //                             'Event Name Missing',
+          //                         style: TextStyle(
+          //                             color: AppTheme.primaryColor, fontSize: 15),
+          //                       ),
+          //                       trailing: Icon(
+          //                         Icons.arrow_forward_ios_sharp,
+          //                         size: 20,
+          //                         color: AppTheme.primaryColor,
+          //                       ),
+          //                       onTap: () {
+          //                         context.navigate(DynamicEventPaymentFormScreen(
+          //                           moduleItem: widget.moduleItem,
+          //                           eventName: eventList[index]["EVENTNAME"],
+          //                         ));
+          //                       },
+          //                     ),
+          //                   ),
+          //                 );
+          //               },
+          //             )
+          //           : const SizedBox(height: 200, child: CircleLoader())
+          //     ],
+          //   ),
+          // ),
+          ),
     );
   }
 }
-
-class EmailsList {}

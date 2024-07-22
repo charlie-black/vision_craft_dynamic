@@ -109,19 +109,30 @@ class _LoanListScreenState extends State<LoanListScreen> {
                                 height: 1,
                                 width: 1,
                               )
-                            : Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    context.navigate(LoanPaymentScreen(
-                                      loanAccount: loanAccount,
-                                      loanOutstandingBalance:
-                                          loanOutstandingBalance,
-                                      moduleItem: widget.moduleItem,
-                                    ));
-                                  },
-                                  child: Text('Pay Loan'),
-                                ),
+                            : Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        context.navigate(LoanPaymentScreen(
+                                          loanAccount: loanAccount,
+                                          loanOutstandingBalance:
+                                              loanOutstandingBalance,
+                                          moduleItem: widget.moduleItem,
+                                        ));
+                                      },
+                                      child: Text('Pay'),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      child: Text('History'),
+                                    ),
+                                  ),
+                                ],
                               ),
                       ],
                     ),

@@ -371,14 +371,6 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                                     "",
                                     moduleItem: widget.moduleItem,
                                   );
-                                  // DynamicPostCall.processDynamicResponse(
-                                  //     DynamicData(
-                                  //         moduleItem: widget.moduleItem,
-                                  //         actionType: ActionType.PAYBILL,
-                                  //         dynamicResponse: value,
-                                  //         listType: ListType.BeneficiaryList),
-                                  //     context,
-                                  //     "");
                                 }
                               });
                             }
