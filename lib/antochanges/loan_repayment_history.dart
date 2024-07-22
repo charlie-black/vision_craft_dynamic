@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 
 class LoanRepaymentHistoryScreen extends StatefulWidget {
   final ModuleItem moduleItem;
+  final String encryptedPin;
   const LoanRepaymentHistoryScreen({
     super.key,
     required this.moduleItem,
+    required this.encryptedPin,
   });
 
   @override
@@ -25,7 +27,9 @@ class _LoanRepaymentHistoryScreenState
   @override
   void initState() {
     super.initState();
-    _apiServices.getLoanRepaymentHistory().then((response) {
+    _apiServices
+        .getLoanRepaymentHistory(userPin: widget.encryptedPin)
+        .then((response) {
       setState(() {
         if (response != null && response.status == "000") {
           eventList =
