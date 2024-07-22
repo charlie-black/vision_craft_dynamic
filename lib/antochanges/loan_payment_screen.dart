@@ -362,13 +362,23 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                                 if (value.status ==
                                     StatusCode.success.statusCode) {
                                   DynamicPostCall.processDynamicResponse(
-                                      DynamicData(
-                                          moduleItem: widget.moduleItem,
-                                          actionType: ActionType.PAYBILL,
-                                          dynamicResponse: value,
-                                          listType: ListType.BeneficiaryList),
-                                      context,
-                                      "");
+                                    DynamicData(
+                                        actionType: ActionType.PAYBILL,
+                                        dynamicResponse: value!,
+                                        moduleItem: widget.moduleItem,
+                                        listType: ListType.BeneficiaryList),
+                                    context,
+                                    "",
+                                    moduleItem: widget.moduleItem,
+                                  );
+                                  // DynamicPostCall.processDynamicResponse(
+                                  //     DynamicData(
+                                  //         moduleItem: widget.moduleItem,
+                                  //         actionType: ActionType.PAYBILL,
+                                  //         dynamicResponse: value,
+                                  //         listType: ListType.BeneficiaryList),
+                                  //     context,
+                                  //     "");
                                 }
                               });
                             }
