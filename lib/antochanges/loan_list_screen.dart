@@ -1,5 +1,6 @@
 import 'package:craft_dynamic/antochanges/extensions.dart';
 import 'package:craft_dynamic/antochanges/loan_payment_screen.dart';
+import 'package:craft_dynamic/antochanges/loan_repayment_history.dart';
 import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
 
@@ -128,7 +129,12 @@ class _LoanListScreenState extends State<LoanListScreen> {
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        context.navigate(
+                                            LoanRepaymentHistoryScreen(
+                                          moduleItem: widget.moduleItem,
+                                        ));
+                                      },
                                       child: Text('History'),
                                     ),
                                   ),
