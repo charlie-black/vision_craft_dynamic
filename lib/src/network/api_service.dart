@@ -109,9 +109,11 @@ class APIService {
     return jsonEncode(requestObject);
   }
 
-  Future<DynamicResponse?> getLoanRepaymentHistory({required String userPin}) async {
+  Future<DynamicResponse?> getLoanRepaymentHistory(
+      {required String userPin}) async {
     var request = await dioRequestBodySetUp("PAYBILL", objectMap: {
-      "Paybill": {"HEADER": "GETCLIENTLOANACCOUNTS"},"EncryptedFields": {"PIN": userPin }
+      "Paybill": {"HEADER": "GETCLIENTLOANACCOUNTS"},
+      "EncryptedFields": {"PIN": CryptLib.encryptField(userPin)}
     });
     final route = await _sharedPref.getRoute("account".toLowerCase());
     var response = await performDioRequest(request, route: route);

@@ -231,7 +231,7 @@ class _LoanListScreenState extends State<LoanListScreen> {
                                                                               .validate()) {
                                                                             context.navigate(LoanRepaymentHistoryScreen(
                                                                               moduleItem: widget.moduleItem,
-                                                                              encryptedPin: CryptLib.encryptField(_pinController.text),
+                                                                              encryptedPin: _pinController.text,
                                                                             ));
                                                                           }
                                                                         },
