@@ -111,31 +111,43 @@ class _LoanListScreenState extends State<LoanListScreen> {
                                 width: 1,
                               )
                             : Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        context.navigate(LoanPaymentScreen(
-                                          loanAccount: loanAccount,
-                                          loanOutstandingBalance:
-                                              loanOutstandingBalance,
-                                          moduleItem: widget.moduleItem,
-                                        ));
-                                      },
-                                      child: Text('Pay'),
+                                  Expanded(
+                                    flex: 4,
+                                    child: Container(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            context.navigate(LoanPaymentScreen(
+                                              loanAccount: loanAccount,
+                                              loanOutstandingBalance:
+                                                  loanOutstandingBalance,
+                                              moduleItem: widget.moduleItem,
+                                            ));
+                                          },
+                                          child: Text('Pay'),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        context.navigate(
-                                            LoanRepaymentHistoryScreen(
-                                          moduleItem: widget.moduleItem,
-                                        ));
-                                      },
-                                      child: Text('History'),
+                                  Expanded(
+                                    flex: 4,
+                                    child: Container(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            context.navigate(
+                                                LoanRepaymentHistoryScreen(
+                                              moduleItem: widget.moduleItem,
+                                            ));
+                                          },
+                                          child: Text('History'),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
