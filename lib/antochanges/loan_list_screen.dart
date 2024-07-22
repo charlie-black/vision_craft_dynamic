@@ -8,7 +8,8 @@ import '../src/util/widget_util.dart';
 CommonSharedPref _sharedPrefs = CommonSharedPref();
 
 class LoanListScreen extends StatefulWidget {
-  const LoanListScreen({super.key});
+  final ModuleItem moduleItem;
+  const LoanListScreen({super.key, required this.moduleItem});
 
   @override
   State<LoanListScreen> createState() => _LoanListScreenState();
@@ -116,6 +117,7 @@ class _LoanListScreenState extends State<LoanListScreen> {
                                       loanAccount: loanAccount,
                                       loanOutstandingBalance:
                                           loanOutstandingBalance,
+                                      moduleItem: widget.moduleItem,
                                     ));
                                   },
                                   child: Text('Pay Loan'),
