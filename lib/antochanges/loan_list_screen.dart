@@ -142,62 +142,113 @@ class _LoanListScreenState extends State<LoanListScreen> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            showModalBottomSheet(
+                                            showModalBottomSheet<void>(
+                                              showDragHandle: true,
+                                              enableDrag: true,
                                               context: context,
-                                              builder: (context) {
-                                                return Form(
-                                                  key: _formKey,
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            16.0),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        TextFormField(
-                                                          obscureText: true,
-                                                          keyboardType:
-                                                              TextInputType
-                                                                  .number,
+                                              builder: (BuildContext context) {
+                                                return ListView(
+                                                    shrinkWrap: true,
+                                                    children: [
+                                                      Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  left: 16,
+                                                                  right: 16,
+                                                                  top: 12,
+                                                                  bottom: 4),
                                                           decoration:
-                                                              const InputDecoration(
-                                                                  labelText:
-                                                                      "PIN"),
-                                                          validator: (value) {
-                                                            if (value == null ||
-                                                                value.isEmpty) {
-                                                              return "PIN required*";
-                                                            }
+                                                              const BoxDecoration(
+                                                                  image:
+                                                                      DecorationImage(
+                                                            opacity: .1,
+                                                            image: AssetImage(
+                                                              'assets/launcher.png',
+                                                            ),
+                                                          )),
+                                                          child: Column(
+                                                            children: [
+                                                              Row(
+                                                                children: [
+                                                                  const Text(
+                                                                    "Enter Pin to Continue",
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            20),
+                                                                  ),
+                                                                  const Spacer(),
+                                                                  TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop(
+                                                                              1);
+                                                                    },
+                                                                    child: const Row(
+                                                                        children: [
+                                                                          Icon(Icons
+                                                                              .close),
+                                                                          Text(
+                                                                              "Cancel")
+                                                                        ]),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 12,
+                                                              ),
+                                                              Form(
+                                                                  key: _formKey,
+                                                                  child: Column(
+                                                                    children: [
+                                                                      TextFormField(
+                                                                        obscureText:
+                                                                            true,
+                                                                        keyboardType:
+                                                                            TextInputType.number,
+                                                                        decoration:
+                                                                            const InputDecoration(labelText: "PIN"),
+                                                                        validator:
+                                                                            (value) {
+                                                                          if (value == null ||
+                                                                              value.isEmpty) {
+                                                                            return "PIN required*";
+                                                                          }
 
-                                                            return null;
-                                                          },
-                                                        ),
-                                                        const SizedBox(
-                                                            height: 16),
-                                                        ElevatedButton(
-                                                          onPressed: () {
-                                                            if (_formKey
-                                                                .currentState!
-                                                                .validate()) {
-                                                              context.navigate(
-                                                                  LoanRepaymentHistoryScreen(
-                                                                moduleItem: widget
-                                                                    .moduleItem,
-                                                                encryptedPin: CryptLib
-                                                                    .encryptField(
-                                                                        _pinController
-                                                                            .text),
-                                                              ));
-                                                            }
-                                                          },
-                                                          child:
-                                                              Text('Continue'),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
+                                                                          return null;
+                                                                        },
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          height:
+                                                                              16),
+                                                                      ElevatedButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          if (_formKey
+                                                                              .currentState!
+                                                                              .validate()) {
+                                                                            context.navigate(LoanRepaymentHistoryScreen(
+                                                                              moduleItem: widget.moduleItem,
+                                                                              encryptedPin: CryptLib.encryptField(_pinController.text),
+                                                                            ));
+                                                                          }
+                                                                        },
+                                                                        child: Text(
+                                                                            'Continue'),
+                                                                      ),
+                                                                    ],
+                                                                  )),
+                                                              const SizedBox(
+                                                                height: 44,
+                                                              ),
+                                                              const SizedBox(
+                                                                height: 44,
+                                                              )
+                                                            ],
+                                                          ))
+                                                    ]);
                                               },
                                             );
                                           },
