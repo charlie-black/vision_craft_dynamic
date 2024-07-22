@@ -269,7 +269,7 @@ class ModuleUtil {
       case ModuleId.LOANINFORMATION:
         {
           Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const LoanListScreen()));
+              MaterialPageRoute(builder: (context) =>  LoanListScreen(moduleItem: moduleItem,)));
           break;
         }
       case ModuleId.TERMDEPOSITSTATUS:

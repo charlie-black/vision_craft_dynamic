@@ -1,15 +1,17 @@
-import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
+
 import '../craft_dynamic.dart';
 
 class LoanPaymentScreen extends StatefulWidget {
   final String loanAccount;
   final String loanOutstandingBalance;
+  final ModuleItem moduleItem;
 
   const LoanPaymentScreen({
     super.key,
     required this.loanAccount,
     required this.loanOutstandingBalance,
+    required this.moduleItem,
   });
 
   @override
@@ -78,18 +80,18 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     if (response.status != "000") {
       AlertUtil.showAlertDialog(context, response.message ?? "");
     } else {
-      CoolAlert.show(
-        backgroundColor: const Color(0xff293178),
-        confirmBtnColor: const Color(0xff293178),
-        onConfirmBtnTap: () {
-          Navigator.pop(context);
-          _clearFields();
-        },
-        title: "${response.message}!",
-        context: context,
-        type: CoolAlertType.success,
-        text: "Loan payment was successful.",
-      );
+      // CoolAlert.show(
+      //   backgroundColor: const Color(0xff293178),
+      //   confirmBtnColor: const Color(0xff293178),
+      //   onConfirmBtnTap: () {
+      //     Navigator.pop(context);
+      //     _clearFields();
+      //   },
+      //   title: "${response.message}!",
+      //   context: context,
+      //   type: CoolAlertType.success,
+      //   text: "Loan payment was successful.",
+      // );
     }
     return response;
   }
@@ -360,11 +362,15 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                                 if (value.status ==
                                     StatusCode.success.statusCode) {
                                   DynamicPostCall.processDynamicResponse(
-                                      DynamicData(
-                                          actionType: ActionType.PAYBILL,
-                                          dynamicResponse: value),
-                                      context,
-                                      "");
+                                    DynamicData(
+                                        actionType: ActionType.PAYBILL,
+                                        dynamicResponse: value!,
+                                        moduleItem: widget.moduleItem,
+                                        listType: ListType.BeneficiaryList),
+                                    context,
+                                    "",
+                                    moduleItem: widget.moduleItem,
+                                  );
                                 }
                               });
                             }
