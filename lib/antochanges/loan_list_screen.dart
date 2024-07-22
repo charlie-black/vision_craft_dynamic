@@ -19,6 +19,8 @@ class LoanListScreen extends StatefulWidget {
 class _LoanListScreenState extends State<LoanListScreen> {
   final _apiServices = APIService();
   late Future<DynamicResponse> _loanInfoFuture;
+  final TextEditingController _pinController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -140,10 +142,64 @@ class _LoanListScreenState extends State<LoanListScreen> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            context.navigate(
-                                                LoanRepaymentHistoryScreen(
-                                              moduleItem: widget.moduleItem,
-                                            ));
+                                            showModalBottomSheet(
+                                              context: context,
+                                              builder: (context) {
+                                                return Form(
+                                                  key: _formKey,
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            16.0),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        TextFormField(
+                                                          obscureText: true,
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          decoration:
+                                                              const InputDecoration(
+                                                                  labelText:
+                                                                      "PIN"),
+                                                          validator: (value) {
+                                                            if (value == null ||
+                                                                value.isEmpty) {
+                                                              return "PIN required*";
+                                                            }
+
+                                                            return null;
+                                                          },
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 16),
+                                                        ElevatedButton(
+                                                          onPressed: () {
+                                                            if (_formKey
+                                                                .currentState!
+                                                                .validate()) {
+                                                              context.navigate(
+                                                                  LoanRepaymentHistoryScreen(
+                                                                moduleItem: widget
+                                                                    .moduleItem,
+                                                                encryptedPin: CryptLib
+                                                                    .encryptField(
+                                                                        _pinController
+                                                                            .text),
+                                                              ));
+                                                            }
+                                                          },
+                                                          child:
+                                                              Text('Continue'),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
                                           },
                                           child: Text('History'),
                                         ),
