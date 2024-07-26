@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../craft_dynamic.dart';
+import '../src/network/dynamic_request.dart';
 
 class LoanPaymentScreen extends StatefulWidget {
   final String loanAccount;
@@ -117,6 +119,52 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
       "MerchantID": "GETCLIENTLOANACCOUNTS",
     });
   }
+
+  Future<void> _showConfirmationDialog() async {
+    // Prepare the form data for the confirmation dialog
+    List<FormItem> formItems = [
+      FormItem(controlType: 'Loan Account', controlText: widget.loanAccount, moduleId: widget.moduleItem.moduleId),
+      FormItem(controlType: 'Outstanding Balance', controlText: widget.loanOutstandingBalance, moduleId: widget.moduleItem.moduleId),
+      FormItem(controlType: 'Payment Account', controlText: selectedAccount ?? 'Not selected', moduleId: widget.moduleItem.moduleId),
+      FormItem(controlType: 'Amount', controlText: innerObj['AMOUNT']?.toString() ?? '0', moduleId: widget.moduleItem.moduleId),
+      FormItem(controlType: 'Remarks', controlText: innerObj['INFOFIELD2'] ?? '', moduleId: widget.moduleItem.moduleId),
+    ];
+
+    // Use DynamicFormRequest to show the confirmation dialog
+    var dynamicRequest = DynamicFormRequest();
+    var result = await dynamicRequest.dynamicRequest(
+      widget.moduleItem,
+      formItem: null,
+      dataObj: innerObj,
+      encryptedField: {},
+      context: context,
+      listType: ListType.TransactionList,
+      action: ActionType.PAYBILL,
+    );
+
+    if (result?.status == StatusCode.success.statusCode) {
+      // Proceed with the payment if confirmed
+      await makeLoanPayment().then((value) {
+        if (value.status == StatusCode.success.statusCode) {
+          DynamicPostCall.processDynamicResponse(
+            DynamicData(
+              actionType: ActionType.PAYBILL,
+              dynamicResponse: value,
+              moduleItem: widget.moduleItem,
+              listType: ListType.BeneficiaryList,
+            ),
+            context,
+            "",
+            moduleItem: widget.moduleItem,
+          );
+        }
+      });
+    } else {
+      // Handle cancellation if needed
+      Fluttertoast.showToast(msg: "Transaction canceled.", backgroundColor: Colors.red);
+    }
+  }
+
 
   @override
   void dispose() {
@@ -358,21 +406,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               await insertInnerObjects();
-                              makeLoanPayment().then((value) {
-                                if (value.status ==
-                                    StatusCode.success.statusCode) {
-                                  DynamicPostCall.processDynamicResponse(
-                                    DynamicData(
-                                        actionType: ActionType.PAYBILL,
-                                        dynamicResponse: value,
-                                        moduleItem: widget.moduleItem,
-                                        listType: ListType.BeneficiaryList),
-                                    context,
-                                    "",
-                                    moduleItem: widget.moduleItem,
-                                  );
-                                }
-                              });
+                              _showConfirmationDialog();
                             }
                           },
                           child: const Text('Proceed to Pay'),
