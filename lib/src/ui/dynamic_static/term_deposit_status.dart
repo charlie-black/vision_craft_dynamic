@@ -36,8 +36,7 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
       ),
       body: FutureBuilder<TermDepositDynamicResponse>(
         future: _apiServices.getTermDepositStatus(),
-        builder:
-            (BuildContext context, AsyncSnapshot<TermDepositDynamicResponse> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<TermDepositDynamicResponse> snapshot) {
           Widget child = Center(
             child: CircularLoadUtil(),
           );
@@ -46,16 +45,32 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
             child = Center(child: CircularLoadUtil());
           } else {
             if (snapshot.hasData) {
-              if (snapshot.data?.status != StatusCode.success.statusCode) {
+              if (snapshot.data?.status != "000") {
                 _showAlert(context, snapshot.data?.message ?? "");
               }
 
-              List<dynamic>? loans = snapshot.data?.data.responseValue.responseData;
-              List<Map> items = [];
+              List<TermDepositData>? deposits = snapshot.data?.data;
+              List<Map<String, dynamic>> items = [];
 
-              if (loans != null) {
-                for (var item in loans) {
-                  items.add(item);
+              if (deposits != null) {
+                for (var item in deposits) {
+                  Map<String, dynamic> mapItem = {
+                    "Branch Name": item.branchName,
+                    "Account ID": item.accountId,
+                    "Account Name": item.accountName,
+                    "Receipt ID": item.receiptId,
+                    "Serial ID": item.serialId,
+                    "Currency ID": item.currencyId,
+                    "Amount": item.amount,
+                    "Interest Rate": item.interestRate,
+                    "Term": item.term,
+                    "Start Date": item.startDate,
+                    "Mature Date": item.matureDate,
+                  };
+
+                  // Remove null values
+                  mapItem.removeWhere((key, value) => value == null);
+                  items.add(mapItem);
                 }
               }
 
@@ -64,51 +79,39 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   var mapItem = items[index];
-                  mapItem.removeWhere(
-                          (key, value) => key == null || value == null);
 
                   return Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 4.0, vertical: 0.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 0.0),
                     child: Column(
-                      children: mapItem
-                          .map((key, value) => MapEntry(
-                          key,
-                          Container(
-                              padding:
-                              const EdgeInsets.symmetric(vertical: 2),
-                              child: Row(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "$key:",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                        Theme.of(context).primaryColor),
-                                  ),
-                                  Flexible(
-                                      child: Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            color: WidgetUtil.getTextColor(
-                                                value.toString(),
-                                                key.toString())),
-                                        textAlign: TextAlign.right,
-                                      ))
-                                ],
-                              ))))
-                          .values
+                      children: mapItem.entries
+                          .map((entry) => Container(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "${entry.key}:",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).primaryColor),
+                            ),
+                            Flexible(
+                                child: Text(
+                                  entry.value.toString(),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.black),
+                                  textAlign: TextAlign.right,
+                                ))
+                          ],
+                        ),
+                      ))
                           .toList(),
                     ),
                   );
                 },
-                separatorBuilder: (BuildContext context, int index) =>
-                const Divider(),
+                separatorBuilder: (BuildContext context, int index) => const Divider(),
               );
             } else {
               child = Center(
@@ -119,7 +122,8 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
 
           return child;
         },
-      ),
+      )
+
     );
   }
 }

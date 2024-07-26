@@ -159,21 +159,7 @@ extension ApiCall on APIService {
   Future<TermDepositDynamicResponse> getTermDepositStatus() async {
     String? res;
     TermDepositDynamicResponse dynamicResponse =
-    TermDepositDynamicResponse(
-      status: StatusCode.unknown.name,
-      message: '',
-      formID: '',
-      nextFormSequence: 0,
-      data: Data(
-        response: '',
-        message: '',
-        responseValue: ResponseValue(
-          status: [],
-          responseData: [],
-        ),
-      ),
-      backStack: 0,
-    );
+    TermDepositDynamicResponse(status: StatusCode.unknown.name, message: "", formID: "", nextFormSequence: 0, data: [], backStack: 0);
 
     Map<String, dynamic> requestObj = {};
     Map<String, dynamic> innerMap = {};
@@ -182,18 +168,19 @@ extension ApiCall on APIService {
     innerMap["ModuleID"] = "TERMDEPOSITSTATUS";
     requestObj[RequestParam.Paybill.name] = innerMap;
 
-    final route =
-    await _sharedPrefs.getRoute(RouteUrl.account.name.toLowerCase());
+    final route = await _sharedPrefs.getRoute(RouteUrl.account.name.toLowerCase());
     try {
       res = await performDioRequest(
           await dioRequestBodySetUp("PAYBILL",
               objectMap: requestObj, isAuthenticate: false),
           route: route);
-      dynamicResponse = TermDepositDynamicResponse.fromJson(jsonDecode(res ?? "{}"));
-      logger.d("termdeposit>>: $res");
+
+      if (res != null && res.isNotEmpty) {
+        dynamicResponse = TermDepositDynamicResponse.fromJson(jsonDecode(res));
+        logger.d("termdeposit>>: $res");
+      }
     } catch (e) {
       AppLogger.appLogE(tag: runtimeType.toString(), message: e.toString());
-      return dynamicResponse;
     }
 
     return dynamicResponse;
