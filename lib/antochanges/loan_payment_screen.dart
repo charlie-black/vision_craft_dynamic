@@ -364,7 +364,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                                   DynamicPostCall.processDynamicResponse(
                                     DynamicData(
                                         actionType: ActionType.PAYBILL,
-                                        dynamicResponse: value!,
+                                        dynamicResponse: value,
                                         moduleItem: widget.moduleItem,
                                         listType: ListType.BeneficiaryList),
                                     context,
