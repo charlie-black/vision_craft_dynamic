@@ -64,7 +64,7 @@ class _LoanListScreenState extends State<LoanListScreen> {
 
                 String loanAccount = mapItem['Loan Account'] ?? '';
                 String loanOutstandingBalance =
-                    mapItem['Outstanding Balance']?.toString() ?? '0';
+                    mapItem['Total Outstanding']?.toString() ?? '0';
                 String loanStatus = mapItem['Loan ID'] ?? "";
 
                 return Padding(

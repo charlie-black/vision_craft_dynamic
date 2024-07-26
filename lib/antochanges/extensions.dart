@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:craft_dynamic/antochanges/loan_list_item.dart';
 import 'package:craft_dynamic/antochanges/loan_products_item.dart';
+import 'package:craft_dynamic/antochanges/term_deposit_dynamic_response.dart';
 
 import '../craft_dynamic.dart';
 import 'loan_list_screen.dart';
@@ -155,11 +156,11 @@ extension ApiCall on APIService {
     return dynamicResponse;
   }
 
-  Future<DynamicResponse> getTermDepositStatus() async {
+  Future<TermDepositDynamicResponse> getTermDepositStatus() async {
     String? res;
-    LoanListItem loanListItem = LoanListItem();
-    DynamicResponse dynamicResponse =
-        DynamicResponse(status: StatusCode.unknown.name);
+    TermDepositDynamicResponse dynamicResponse =
+    TermDepositDynamicResponse(status: StatusCode.unknown.name, message: "", formID: "", nextFormSequence: 0, data: [], backStack: 0);
+
     Map<String, dynamic> requestObj = {};
     Map<String, dynamic> innerMap = {};
 
@@ -167,19 +168,19 @@ extension ApiCall on APIService {
     innerMap["ModuleID"] = "TERMDEPOSITSTATUS";
     requestObj[RequestParam.Paybill.name] = innerMap;
 
-    final route =
-        await _sharedPrefs.getRoute(RouteUrl.account.name.toLowerCase());
+    final route = await _sharedPrefs.getRoute(RouteUrl.account.name.toLowerCase());
     try {
       res = await performDioRequest(
           await dioRequestBodySetUp("PAYBILL",
               objectMap: requestObj, isAuthenticate: false),
           route: route);
-      dynamicResponse = DynamicResponse.fromJson(jsonDecode(res ?? "{}"));
-      logger.d("termdeposit>>: $res");
+
+      if (res != null && res.isNotEmpty) {
+        dynamicResponse = TermDepositDynamicResponse.fromJson(jsonDecode(res));
+        logger.d("termdeposit>>: $res");
+      }
     } catch (e) {
-      // CommonUtils.showToast("Unable to get promotional images");
       AppLogger.appLogE(tag: runtimeType.toString(), message: e.toString());
-      return dynamicResponse;
     }
 
     return dynamicResponse;

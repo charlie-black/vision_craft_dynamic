@@ -1,4 +1,5 @@
 import 'package:craft_dynamic/antochanges/extensions.dart';
+import 'package:craft_dynamic/antochanges/term_deposit_dynamic_response.dart';
 import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
 
@@ -33,10 +34,9 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
       appBar: AppBar(
         title: const Text('Term Deposit Status'),
       ),
-      body: FutureBuilder<DynamicResponse>(
+      body: FutureBuilder<TermDepositDynamicResponse>(
         future: _apiServices.getTermDepositStatus(),
-        builder:
-            (BuildContext context, AsyncSnapshot<DynamicResponse> snapshot) {
+        builder: (BuildContext context, AsyncSnapshot<TermDepositDynamicResponse> snapshot) {
           Widget child = Center(
             child: CircularLoadUtil(),
           );
@@ -45,16 +45,32 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
             child = Center(child: CircularLoadUtil());
           } else {
             if (snapshot.hasData) {
-              if (snapshot.data?.status != StatusCode.success.statusCode) {
+              if (snapshot.data?.status != "000") {
                 _showAlert(context, snapshot.data?.message ?? "");
               }
 
-              List<dynamic>? loans = snapshot.data?.dynamicList;
-              List<Map> items = [];
+              List<TermDepositData>? deposits = snapshot.data?.data;
+              List<Map<String, dynamic>> items = [];
 
-              if (loans != null) {
-                for (var item in loans) {
-                  items.add(item);
+              if (deposits != null) {
+                for (var item in deposits) {
+                  Map<String, dynamic> mapItem = {
+                    "Branch Name": item.branchName,
+                    "Account ID": item.accountId,
+                    "Account Name": item.accountName,
+                    "Receipt ID": item.receiptId,
+                    "Serial ID": item.serialId,
+                    "Currency ID": item.currencyId,
+                    "Amount": item.amount,
+                    "Interest Rate": item.interestRate,
+                    "Term": item.term,
+                    "Start Date": item.startDate,
+                    "Mature Date": item.matureDate,
+                  };
+
+                  // Remove null values
+                  mapItem.removeWhere((key, value) => value == null);
+                  items.add(mapItem);
                 }
               }
 
@@ -63,51 +79,52 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
                 itemCount: items.length,
                 itemBuilder: (context, index) {
                   var mapItem = items[index];
-                  mapItem.removeWhere(
-                          (key, value) => key == null || value == null);
 
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 4.0, vertical: 0.0),
-                    child: Column(
-                      children: mapItem
-                          .map((key, value) => MapEntry(
-                          key,
-                          Container(
-                              padding:
-                              const EdgeInsets.symmetric(vertical: 2),
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(width: 1.0),
+                        borderRadius:
+                        const BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      child: Column(
+                        children: [
+                          ...mapItem.entries.map((entry) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
                               child: Row(
-                                crossAxisAlignment:
-                                CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    "$key:",
+                                    "${entry.key}:",
                                     style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color:
-                                        Theme.of(context).primaryColor),
+                                      fontWeight: FontWeight.bold,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
                                   ),
-                                  Flexible(
-                                      child: Text(
-                                        value.toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.normal,
-                                            color: WidgetUtil.getTextColor(
-                                                value.toString(),
-                                                key.toString())),
-                                        textAlign: TextAlign.right,
-                                      ))
+                                  Text(
+                                    entry.value.toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.normal,
+                                      color: WidgetUtil.getTextColor(
+                                        entry.value.toString(),
+                                        entry.key.toString(),
+                                      ),
+                                    ),
+                                    textAlign: TextAlign.right,
+                                  ),
                                 ],
-                              ))))
-                          .values
-                          .toList(),
+                              ),
+                            );
+                          }).toList(),
+                        ],
+                      ),
                     ),
                   );
                 },
-                separatorBuilder: (BuildContext context, int index) =>
-                const Divider(),
+                separatorBuilder: (BuildContext context, int index) => const Divider(),
               );
             } else {
               child = Center(
@@ -118,7 +135,8 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
 
           return child;
         },
-      ),
+      )
+
     );
   }
 }
