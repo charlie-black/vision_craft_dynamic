@@ -124,7 +124,6 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
                     ),
                   );
                 },
-                separatorBuilder: (BuildContext context, int index) => const Divider(),
               );
             } else {
               child = Center(
