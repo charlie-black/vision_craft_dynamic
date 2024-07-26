@@ -157,9 +157,23 @@ extension ApiCall on APIService {
 
   Future<DynamicResponse> getTermDepositStatus() async {
     String? res;
-    LoanListItem loanListItem = LoanListItem();
     DynamicResponse dynamicResponse =
-        DynamicResponse(status: StatusCode.unknown.name);
+    DynamicResponse(
+      status: StatusCode.unknown.name,
+      message: '',
+      formID: '',
+      nextFormSequence: 0,
+      data: Data(
+        response: '',
+        message: '',
+        responseValue: ResponseValue(
+          status: [],
+          responseData: [],
+        ),
+      ),
+      backStack: 0,
+    );
+
     Map<String, dynamic> requestObj = {};
     Map<String, dynamic> innerMap = {};
 
@@ -168,7 +182,7 @@ extension ApiCall on APIService {
     requestObj[RequestParam.Paybill.name] = innerMap;
 
     final route =
-        await _sharedPrefs.getRoute(RouteUrl.account.name.toLowerCase());
+    await _sharedPrefs.getRoute(RouteUrl.account.name.toLowerCase());
     try {
       res = await performDioRequest(
           await dioRequestBodySetUp("PAYBILL",
@@ -177,7 +191,6 @@ extension ApiCall on APIService {
       dynamicResponse = DynamicResponse.fromJson(jsonDecode(res ?? "{}"));
       logger.d("termdeposit>>: $res");
     } catch (e) {
-      // CommonUtils.showToast("Unable to get promotional images");
       AppLogger.appLogE(tag: runtimeType.toString(), message: e.toString());
       return dynamicResponse;
     }
