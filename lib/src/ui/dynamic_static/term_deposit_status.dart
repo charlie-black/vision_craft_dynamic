@@ -1,4 +1,5 @@
 import 'package:craft_dynamic/antochanges/extensions.dart';
+import 'package:craft_dynamic/antochanges/term_deposit_dynamic_response.dart';
 import 'package:craft_dynamic/craft_dynamic.dart';
 import 'package:flutter/material.dart';
 
@@ -33,10 +34,10 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
       appBar: AppBar(
         title: const Text('Term Deposit Status'),
       ),
-      body: FutureBuilder<DynamicResponse>(
+      body: FutureBuilder<TermDepositDynamicResponse>(
         future: _apiServices.getTermDepositStatus(),
         builder:
-            (BuildContext context, AsyncSnapshot<DynamicResponse> snapshot) {
+            (BuildContext context, AsyncSnapshot<TermDepositDynamicResponse> snapshot) {
           Widget child = Center(
             child: CircularLoadUtil(),
           );
@@ -49,7 +50,7 @@ class _TermDepositStatusState extends State<TermDepositStatus> {
                 _showAlert(context, snapshot.data?.message ?? "");
               }
 
-              List<dynamic>? loans = snapshot.data?.dynamicList;
+              List<dynamic>? loans = snapshot.data?.data.responseValue.responseData;
               List<Map> items = [];
 
               if (loans != null) {

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:craft_dynamic/antochanges/loan_list_item.dart';
 import 'package:craft_dynamic/antochanges/loan_products_item.dart';
+import 'package:craft_dynamic/antochanges/term_deposit_dynamic_response.dart';
 
 import '../craft_dynamic.dart';
 import 'loan_list_screen.dart';
@@ -155,10 +156,10 @@ extension ApiCall on APIService {
     return dynamicResponse;
   }
 
-  Future<DynamicResponse> getTermDepositStatus() async {
+  Future<TermDepositDynamicResponse> getTermDepositStatus() async {
     String? res;
-    DynamicResponse dynamicResponse =
-    DynamicResponse(
+    TermDepositDynamicResponse dynamicResponse =
+    TermDepositDynamicResponse(
       status: StatusCode.unknown.name,
       message: '',
       formID: '',
@@ -188,7 +189,7 @@ extension ApiCall on APIService {
           await dioRequestBodySetUp("PAYBILL",
               objectMap: requestObj, isAuthenticate: false),
           route: route);
-      dynamicResponse = DynamicResponse.fromJson(jsonDecode(res ?? "{}"));
+      dynamicResponse = TermDepositDynamicResponse.fromJson(jsonDecode(res ?? "{}"));
       logger.d("termdeposit>>: $res");
     } catch (e) {
       AppLogger.appLogE(tag: runtimeType.toString(), message: e.toString());
