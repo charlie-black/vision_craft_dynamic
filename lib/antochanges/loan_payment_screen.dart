@@ -1,15 +1,17 @@
-import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
+
 import '../craft_dynamic.dart';
 
 class LoanPaymentScreen extends StatefulWidget {
   final String loanAccount;
   final String loanOutstandingBalance;
+  final ModuleItem moduleItem;
 
   const LoanPaymentScreen({
     super.key,
     required this.loanAccount,
     required this.loanOutstandingBalance,
+    required this.moduleItem,
   });
 
   @override
@@ -41,9 +43,9 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     setState(() {
       accounts = accs
           .map((acc) => DropdownMenuItem<String>(
-        value: acc.bankAccountId,
-        child: Text(acc.bankAccountId),
-      ))
+                value: acc.bankAccountId,
+                child: Text(acc.bankAccountId),
+              ))
           .toList();
     });
   }
@@ -59,7 +61,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     });
   }
 
-  Future<void> makeLoanPayment() async {
+  Future<DynamicResponse> makeLoanPayment() async {
     setState(() {
       _isMakingPayment = true;
     });
@@ -68,7 +70,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     requestobj.addAll({"MerchantID": "GETCLIENTLOANACCOUNTS"});
     requestobj.addAll({"PayBill": innerObj});
 
-    var response = await api.dynamicRequest(
+    DynamicResponse response = await api.dynamicRequest(
         formID: "PAYBILL", requestObj: requestobj, webHeader: "account");
 
     setState(() {
@@ -78,19 +80,20 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     if (response.status != "000") {
       AlertUtil.showAlertDialog(context, response.message ?? "");
     } else {
-      CoolAlert.show(
-        backgroundColor: const Color(0xff293178),
-        confirmBtnColor: const Color(0xff293178),
-        onConfirmBtnTap: () {
-          Navigator.pop(context);
-          _clearFields();
-        },
-        title: "${response.message}!",
-        context: context,
-        type: CoolAlertType.success,
-        text: "Loan payment was successful.",
-      );
+      // CoolAlert.show(
+      //   backgroundColor: const Color(0xff293178),
+      //   confirmBtnColor: const Color(0xff293178),
+      //   onConfirmBtnTap: () {
+      //     Navigator.pop(context);
+      //     _clearFields();
+      //   },
+      //   title: "${response.message}!",
+      //   context: context,
+      //   type: CoolAlertType.success,
+      //   text: "Loan payment was successful.",
+      // );
     }
+    return response;
   }
 
   void _clearFields() {
@@ -144,7 +147,8 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                       decoration: BoxDecoration(
                         color: Colors.transparent,
                         border: Border.all(width: 1.0),
-                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -153,14 +157,16 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                             padding: EdgeInsets.all(8.0),
                             child: Text(
                               "Loan Account",
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w400),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               widget.loanAccount,
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                              style: const TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w400),
                             ),
                           ),
                         ],
@@ -174,7 +180,8 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                       decoration: BoxDecoration(
                         color: Colors.transparent,
                         border: Border.all(width: 1.0),
-                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -183,26 +190,28 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                             padding: EdgeInsets.all(8.0),
                             child: Text(
                               "Outstanding Balance",
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w400),
                             ),
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               widget.loanOutstandingBalance,
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                              style: const TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w400),
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
-
                   const Padding(
                     padding: EdgeInsets.all(8.0),
                     child: Text(
                       "Select Your Payment Account",
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                     ),
                   ),
                   Padding(
@@ -230,7 +239,8 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                     padding: EdgeInsets.all(8.0),
                     child: Text(
                       'Select Payment Type:',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
+                      style:
+                          TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
                     ),
                   ),
                   Padding(
@@ -241,7 +251,8 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                       decoration: BoxDecoration(
                         color: Colors.transparent,
                         border: Border.all(width: 1.0),
-                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10.0)),
                       ),
                       child: Row(
                         children: [
@@ -256,8 +267,8 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Radio<bool>(
                                     activeColor: const Color(0xff293178),
-                                    fillColor:
-                                    WidgetStateColor.resolveWith((states) => const Color(0xff293178)),
+                                    fillColor: WidgetStateColor.resolveWith(
+                                        (states) => const Color(0xff293178)),
                                     value: true,
                                     groupValue: _isFullPayment,
                                     onChanged: _handlePaymentTypeChange,
@@ -277,8 +288,8 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Radio<bool>(
                                     activeColor: const Color(0xff293178),
-                                    fillColor:
-                                    WidgetStateColor.resolveWith((states) => const Color(0xff293178)),
+                                    fillColor: WidgetStateColor.resolveWith(
+                                        (states) => const Color(0xff293178)),
                                     value: false,
                                     groupValue: _isFullPayment,
                                     onChanged: _handlePaymentTypeChange,
@@ -334,7 +345,9 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                       if (value == null || value.isEmpty) {
                         return "PIN required*";
                       }
-                      requestobj["EncryptedFields"] = {"PIN": CryptLib.encryptField(value)};
+                      requestobj["EncryptedFields"] = {
+                        "PIN": CryptLib.encryptField(value)
+                      };
                       return null;
                     },
                   ),
@@ -342,14 +355,28 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                   _isMakingPayment
                       ? LoadUtil()
                       : ElevatedButton(
-                    onPressed: () async {
-                      if (_formKey.currentState!.validate()) {
-                        await insertInnerObjects();
-                        await makeLoanPayment();
-                      }
-                    },
-                    child: const Text('Proceed to Pay'),
-                  ),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              await insertInnerObjects();
+                              makeLoanPayment().then((value) {
+                                if (value.status ==
+                                    StatusCode.success.statusCode) {
+                                  DynamicPostCall.processDynamicResponse(
+                                    DynamicData(
+                                        actionType: ActionType.PAYBILL,
+                                        dynamicResponse: value!,
+                                        moduleItem: widget.moduleItem,
+                                        listType: ListType.BeneficiaryList),
+                                    context,
+                                    "",
+                                    moduleItem: widget.moduleItem,
+                                  );
+                                }
+                              });
+                            }
+                          },
+                          child: const Text('Proceed to Pay'),
+                        ),
                 ],
               ),
             ),

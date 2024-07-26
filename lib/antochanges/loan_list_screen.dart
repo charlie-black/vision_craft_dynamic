@@ -8,7 +8,8 @@ import '../src/util/widget_util.dart';
 CommonSharedPref _sharedPrefs = CommonSharedPref();
 
 class LoanListScreen extends StatefulWidget {
-  const LoanListScreen({super.key});
+  final ModuleItem moduleItem;
+  const LoanListScreen({super.key, required this.moduleItem});
 
   @override
   State<LoanListScreen> createState() => _LoanListScreenState();
@@ -17,6 +18,8 @@ class LoanListScreen extends StatefulWidget {
 class _LoanListScreenState extends State<LoanListScreen> {
   final _apiServices = APIService();
   late Future<DynamicResponse> _loanInfoFuture;
+  final TextEditingController _pinController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -116,11 +119,159 @@ class _LoanListScreenState extends State<LoanListScreen> {
                                       loanAccount: loanAccount,
                                       loanOutstandingBalance:
                                           loanOutstandingBalance,
+                                      moduleItem: widget.moduleItem,
                                     ));
                                   },
-                                  child: Text('Pay Loan'),
+                                  child: Text('Pay'),
                                 ),
                               ),
+                        // Row(
+                        //         mainAxisAlignment:
+                        //             MainAxisAlignment.spaceBetween,
+                        //         children: [
+                        //           Expanded(
+                        //             flex: 4,
+                        //             child: Container(
+                        //               child: Padding(
+                        //                 padding: const EdgeInsets.all(8.0),
+                        //                 child: ElevatedButton(
+                        //                   onPressed: () {
+                        //                     context.navigate(LoanPaymentScreen(
+                        //                       loanAccount: loanAccount,
+                        //                       loanOutstandingBalance:
+                        //                           loanOutstandingBalance,
+                        //                       moduleItem: widget.moduleItem,
+                        //                     ));
+                        //                   },
+                        //                   child: Text('Pay'),
+                        //                 ),
+                        //               ),
+                        //             ),
+                        //           ),
+                        //           // Expanded(
+                        //           //   flex: 4,
+                        //           //   child: Container(
+                        //           //     child: Padding(
+                        //           //       padding: const EdgeInsets.all(8.0),
+                        //           //       child: ElevatedButton(
+                        //           //         onPressed: () {
+                        //           //           showModalBottomSheet<void>(
+                        //           //             showDragHandle: true,
+                        //           //             enableDrag: true,
+                        //           //             context: context,
+                        //           //             builder: (BuildContext context) {
+                        //           //               return ListView(
+                        //           //                   shrinkWrap: true,
+                        //           //                   children: [
+                        //           //                     Container(
+                        //           //                         padding:
+                        //           //                             const EdgeInsets
+                        //           //                                 .only(
+                        //           //                                 left: 16,
+                        //           //                                 right: 16,
+                        //           //                                 top: 12,
+                        //           //                                 bottom: 4),
+                        //           //                         decoration:
+                        //           //                             const BoxDecoration(
+                        //           //                                 image:
+                        //           //                                     DecorationImage(
+                        //           //                           opacity: .1,
+                        //           //                           image: AssetImage(
+                        //           //                             'assets/launcher.png',
+                        //           //                           ),
+                        //           //                         )),
+                        //           //                         child: Column(
+                        //           //                           children: [
+                        //           //                             Row(
+                        //           //                               children: [
+                        //           //                                 const Text(
+                        //           //                                   "Enter Pin to Continue",
+                        //           //                                   style: TextStyle(
+                        //           //                                       fontSize:
+                        //           //                                           20),
+                        //           //                                 ),
+                        //           //                                 const Spacer(),
+                        //           //                                 TextButton(
+                        //           //                                   onPressed:
+                        //           //                                       () {
+                        //           //                                     Navigator.of(
+                        //           //                                             context)
+                        //           //                                         .pop(
+                        //           //                                             1);
+                        //           //                                   },
+                        //           //                                   child: const Row(
+                        //           //                                       children: [
+                        //           //                                         Icon(Icons
+                        //           //                                             .close),
+                        //           //                                         Text(
+                        //           //                                             "Cancel")
+                        //           //                                       ]),
+                        //           //                                 ),
+                        //           //                               ],
+                        //           //                             ),
+                        //           //                             const SizedBox(
+                        //           //                               height: 12,
+                        //           //                             ),
+                        //           //                             Form(
+                        //           //                                 key: _formKey,
+                        //           //                                 child: Column(
+                        //           //                                   children: [
+                        //           //                                     TextFormField(
+                        //           //                                       obscureText:
+                        //           //                                           true,
+                        //           //                                       keyboardType:
+                        //           //                                           TextInputType.number,
+                        //           //                                       decoration:
+                        //           //                                           const InputDecoration(labelText: "PIN"),
+                        //           //                                       validator:
+                        //           //                                           (value) {
+                        //           //                                         if (value == null ||
+                        //           //                                             value.isEmpty) {
+                        //           //                                           return "PIN required*";
+                        //           //                                         }
+                        //           //
+                        //           //                                         return null;
+                        //           //                                       },
+                        //           //                                     ),
+                        //           //                                     const SizedBox(
+                        //           //                                         height:
+                        //           //                                             16),
+                        //           //                                     ElevatedButton(
+                        //           //                                       onPressed:
+                        //           //                                           () {
+                        //           //                                         if (_formKey
+                        //           //                                             .currentState!
+                        //           //                                             .validate()) {
+                        //           //                                           context.navigate(LoanRepaymentHistoryScreen(
+                        //           //                                             moduleItem: widget.moduleItem,
+                        //           //                                             encryptedPin: _pinController.text,
+                        //           //                                           ));
+                        //           //                                         }
+                        //           //                                       },
+                        //           //                                       child: Text(
+                        //           //                                           'Continue'),
+                        //           //                                     ),
+                        //           //                                   ],
+                        //           //                                 )),
+                        //           //                             const SizedBox(
+                        //           //                               height: 44,
+                        //           //                             ),
+                        //           //                             const SizedBox(
+                        //           //                               height: 44,
+                        //           //                             )
+                        //           //                           ],
+                        //           //                         ))
+                        //           //                   ]);
+                        //           //             },
+                        //           //           );
+                        //           //         },
+                        //           //         child: Text('History'),
+                        //           //       ),
+                        //           //     ),
+                        //           //   ),
+                        //           // ),
+                        //         ],
+                        //       ),
                       ],
                     ),
                   ),
