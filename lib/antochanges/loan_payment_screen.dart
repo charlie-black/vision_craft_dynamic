@@ -362,7 +362,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                             _showConfirmationBottomSheet();
                             }
                           },
-                          child: const Text('Proceed to Pay'),
+                          child: const Text('Confirm Payment'),
                         ),
                 ],
               ),
@@ -392,7 +392,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                 children: [
                   const Center(
                     child: Text(
-                      "Bulk Payment Confirmation",
+                      "Loan Payment Confirmation",
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
