@@ -430,6 +430,7 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                       });
                       makeLoanPayment().then((value) {
                         if (value.status == StatusCode.success.statusCode) {
+                          Navigator.pop(context);
                           DynamicPostCall.processDynamicResponse(
                             DynamicData(
                               actionType: ActionType.PAYBILL,
@@ -441,13 +442,31 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                             "",
                             moduleItem: widget.moduleItem,
                           );
+                        } else {
+                          setState(() {
+                            _isMakingPayment = false;
+                          });
+                          CoolAlert.show(
+                            backgroundColor: const Color(0xff293178),
+                            confirmBtnColor: const Color(0xff293178),
+                            title: "Error",
+                            context: context,
+                            type: CoolAlertType.error,
+                            text: value.message,
+                          );
                         }
-                        Navigator.pop(context);
                       }).catchError((e) {
                         setState(() {
                           _isMakingPayment = false;
                         });
-                        AlertUtil.showAlertDialog(context, "An error occurred: ${e.toString()}");
+                        CoolAlert.show(
+                          backgroundColor: const Color(0xff293178),
+                          confirmBtnColor: const Color(0xff293178),
+                          title: "Error",
+                          context: context,
+                          type: CoolAlertType.error,
+                          text: "An error occurred: ${e.toString()}",
+                        );
                       });
                     },
                   ),
