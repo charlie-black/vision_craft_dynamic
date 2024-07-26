@@ -1,8 +1,7 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import '../craft_dynamic.dart';
-import '../src/network/dynamic_request.dart';
 
 class LoanPaymentScreen extends StatefulWidget {
   final String loanAccount;
@@ -120,50 +119,6 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     });
   }
 
-  Future<void> _showConfirmationDialog() async {
-    // Prepare the form data for the confirmation dialog
-    List<FormItem> formItems = [
-      FormItem(controlType: 'Loan Account', controlText: widget.loanAccount, moduleId: widget.moduleItem.moduleId),
-      FormItem(controlType: 'Outstanding Balance', controlText: widget.loanOutstandingBalance, moduleId: widget.moduleItem.moduleId),
-      FormItem(controlType: 'Payment Account', controlText: selectedAccount ?? 'Not selected', moduleId: widget.moduleItem.moduleId),
-      FormItem(controlType: 'Amount', controlText: innerObj['AMOUNT']?.toString() ?? '0', moduleId: widget.moduleItem.moduleId),
-      FormItem(controlType: 'Remarks', controlText: innerObj['INFOFIELD2'] ?? '', moduleId: widget.moduleItem.moduleId),
-    ];
-
-    // Use DynamicFormRequest to show the confirmation dialog
-    var dynamicRequest = DynamicFormRequest();
-    var result = await dynamicRequest.dynamicRequest(
-      widget.moduleItem,
-      formItem: null,
-      dataObj: innerObj,
-      encryptedField: {},
-      context: context,
-      listType: ListType.TransactionList,
-      action: ActionType.PAYBILL,
-    );
-
-    if (result?.status == StatusCode.success.statusCode) {
-      // Proceed with the payment if confirmed
-      await makeLoanPayment().then((value) {
-        if (value.status == StatusCode.success.statusCode) {
-          DynamicPostCall.processDynamicResponse(
-            DynamicData(
-              actionType: ActionType.PAYBILL,
-              dynamicResponse: value,
-              moduleItem: widget.moduleItem,
-              listType: ListType.BeneficiaryList,
-            ),
-            context,
-            "",
-            moduleItem: widget.moduleItem,
-          );
-        }
-      });
-    } else {
-      // Handle cancellation if needed
-      Fluttertoast.showToast(msg: "Transaction canceled.", backgroundColor: Colors.red);
-    }
-  }
 
 
   @override
@@ -400,13 +355,11 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  _isMakingPayment
-                      ? LoadUtil()
-                      : ElevatedButton(
+                ElevatedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               await insertInnerObjects();
-                              _showConfirmationDialog();
+                            _showConfirmationBottomSheet();
                             }
                           },
                           child: const Text('Proceed to Pay'),
@@ -419,4 +372,92 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
       ),
     );
   }
+
+  void _showConfirmationBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  opacity: .1,
+                  image: AssetImage('assets/launcher.png'),
+                ),
+              ),
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Center(
+                    child: Text(
+                      "Bulk Payment Confirmation",
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                   ListTile(
+                    leading: const Text("Loan Account"),
+                    trailing: Text(widget.loanAccount),
+                  ),
+                   ListTile(
+                    leading: const Text("Outstanding Balance"),
+                    trailing: Text(widget.loanOutstandingBalance),
+                  ),
+                  ListTile(
+                    leading: const Text("Payment Account"),
+                    trailing: Text(selectedAccount??"No account selected"),
+                  ),
+                  ListTile(
+                    leading: const Text("Payment Amount"),
+                    trailing: Text(_amountController.text),
+                  ),
+                  ListTile(
+                    leading: const Text("Remarks"),
+                    trailing: Text(_remarksController.text),
+                  ),
+                  const SizedBox(height: 16.0),
+                  _isMakingPayment
+                      ?  LoadUtil()
+                      : ElevatedButton(
+                    child: const Text('Send'),
+                    onPressed: () {
+                      setState(() {
+                        _isMakingPayment = true;
+                      });
+                      makeLoanPayment().then((value) {
+                        if (value.status == StatusCode.success.statusCode) {
+                          DynamicPostCall.processDynamicResponse(
+                            DynamicData(
+                              actionType: ActionType.PAYBILL,
+                              dynamicResponse: value,
+                              moduleItem: widget.moduleItem,
+                              listType: ListType.BeneficiaryList,
+                            ),
+                            context,
+                            "",
+                            moduleItem: widget.moduleItem,
+                          );
+                        }
+                        Navigator.pop(context);
+                      }).catchError((e) {
+                        setState(() {
+                          _isMakingPayment = false;
+                        });
+                        AlertUtil.showAlertDialog(context, "An error occurred: ${e.toString()}");
+                      });
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
 }
