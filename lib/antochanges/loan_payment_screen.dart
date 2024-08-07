@@ -5,15 +5,16 @@ import '../craft_dynamic.dart';
 
 class LoanPaymentScreen extends StatefulWidget {
   final String loanAccount;
+  final String repaymentAccountId;
   final String loanOutstandingBalance;
   final ModuleItem moduleItem;
 
-  const LoanPaymentScreen({
-    super.key,
-    required this.loanAccount,
-    required this.loanOutstandingBalance,
-    required this.moduleItem,
-  });
+  const LoanPaymentScreen(
+      {super.key,
+      required this.loanAccount,
+      required this.loanOutstandingBalance,
+      required this.moduleItem,
+      required this.repaymentAccountId});
 
   @override
   State<LoanPaymentScreen> createState() => _LoanPaymentScreenState();
@@ -119,8 +120,6 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
     });
   }
 
-
-
   @override
   void dispose() {
     _amountController.dispose();
@@ -168,6 +167,39 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               widget.loanAccount,
+                              style: const TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        border: Border.all(width: 1.0),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              "Repayment Account ID",
+                              style: TextStyle(
+                                  fontSize: 12, fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.repaymentAccountId,
                               style: const TextStyle(
                                   fontSize: 12, fontWeight: FontWeight.w400),
                             ),
@@ -355,15 +387,15 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                ElevatedButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              await insertInnerObjects();
-                            _showConfirmationBottomSheet();
-                            }
-                          },
-                          child: const Text('Confirm Payment'),
-                        ),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        await insertInnerObjects();
+                        _showConfirmationBottomSheet();
+                      }
+                    },
+                    child: const Text('Confirm Payment'),
+                  ),
                 ],
               ),
             ),
@@ -399,17 +431,17 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                       ),
                     ),
                   ),
-                   ListTile(
+                  ListTile(
                     leading: const Text("Loan Account"),
                     trailing: Text(widget.loanAccount),
                   ),
-                   ListTile(
+                  ListTile(
                     leading: const Text("Outstanding Balance"),
                     trailing: Text(widget.loanOutstandingBalance),
                   ),
                   ListTile(
                     leading: const Text("Payment Account"),
-                    trailing: Text(selectedAccount??"No account selected"),
+                    trailing: Text(selectedAccount ?? "No account selected"),
                   ),
                   ListTile(
                     leading: const Text("Payment Amount"),
@@ -421,55 +453,56 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
                   ),
                   const SizedBox(height: 16.0),
                   _isMakingPayment
-                      ?  LoadUtil()
+                      ? LoadUtil()
                       : ElevatedButton(
-                    child: const Text('Send'),
-                    onPressed: () {
-                      setState(() {
-                        _isMakingPayment = true;
-                      });
-                      makeLoanPayment().then((value) {
-                        if (value.status == StatusCode.success.statusCode) {
-                          Navigator.pop(context);
-                          DynamicPostCall.processDynamicResponse(
-                            DynamicData(
-                              actionType: ActionType.PAYBILL,
-                              dynamicResponse: value,
-                              moduleItem: widget.moduleItem,
-                              listType: ListType.BeneficiaryList,
-                            ),
-                            context,
-                            "",
-                            moduleItem: widget.moduleItem,
-                          );
-                        } else {
-                          setState(() {
-                            _isMakingPayment = false;
-                          });
-                          CoolAlert.show(
-                            backgroundColor: const Color(0xff293178),
-                            confirmBtnColor: const Color(0xff293178),
-                            title: "Error",
-                            context: context,
-                            type: CoolAlertType.error,
-                            text: value.message,
-                          );
-                        }
-                      }).catchError((e) {
-                        setState(() {
-                          _isMakingPayment = false;
-                        });
-                        CoolAlert.show(
-                          backgroundColor: const Color(0xff293178),
-                          confirmBtnColor: const Color(0xff293178),
-                          title: "Error",
-                          context: context,
-                          type: CoolAlertType.error,
-                          text: "An error occurred: ${e.toString()}",
-                        );
-                      });
-                    },
-                  ),
+                          child: const Text('Send'),
+                          onPressed: () {
+                            setState(() {
+                              _isMakingPayment = true;
+                            });
+                            makeLoanPayment().then((value) {
+                              if (value.status ==
+                                  StatusCode.success.statusCode) {
+                                Navigator.pop(context);
+                                DynamicPostCall.processDynamicResponse(
+                                  DynamicData(
+                                    actionType: ActionType.PAYBILL,
+                                    dynamicResponse: value,
+                                    moduleItem: widget.moduleItem,
+                                    listType: ListType.BeneficiaryList,
+                                  ),
+                                  context,
+                                  "",
+                                  moduleItem: widget.moduleItem,
+                                );
+                              } else {
+                                setState(() {
+                                  _isMakingPayment = false;
+                                });
+                                CoolAlert.show(
+                                  backgroundColor: const Color(0xff293178),
+                                  confirmBtnColor: const Color(0xff293178),
+                                  title: "Error",
+                                  context: context,
+                                  type: CoolAlertType.error,
+                                  text: value.message,
+                                );
+                              }
+                            }).catchError((e) {
+                              setState(() {
+                                _isMakingPayment = false;
+                              });
+                              CoolAlert.show(
+                                backgroundColor: const Color(0xff293178),
+                                confirmBtnColor: const Color(0xff293178),
+                                title: "Error",
+                                context: context,
+                                type: CoolAlertType.error,
+                                text: "An error occurred: ${e.toString()}",
+                              );
+                            });
+                          },
+                        ),
                 ],
               ),
             );
@@ -478,5 +511,4 @@ class _LoanPaymentScreenState extends State<LoanPaymentScreen> {
       },
     );
   }
-
 }
