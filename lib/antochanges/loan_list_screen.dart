@@ -66,6 +66,8 @@ class _LoanListScreenState extends State<LoanListScreen> {
                 String loanOutstandingBalance =
                     mapItem['Total Outstanding']?.toString() ?? '0';
                 String loanStatus = mapItem['Loan ID'] ?? "";
+                String repaymentAccountId =
+                    mapItem['Repayment Account ID'] ?? "";
 
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -120,6 +122,7 @@ class _LoanListScreenState extends State<LoanListScreen> {
                                       loanOutstandingBalance:
                                           loanOutstandingBalance,
                                       moduleItem: widget.moduleItem,
+                                      repaymentAccountId: repaymentAccountId,
                                     ));
                                   },
                                   child: Text('Pay'),
